@@ -346,6 +346,39 @@
                 </select>
               </div>
             </div>
+
+            <!-- Component Info Cards -->
+            <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/60 grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px] text-slate-500 dark:text-slate-400"
+                 x-show="buildConfig.frame || buildConfig.tank">
+              <template x-if="getComp(buildConfig.frame)">
+                <div class="bg-slate-50/50 dark:bg-slate-900/30 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800 flex flex-col justify-between">
+                  <div>
+                    <span class="font-bold text-slate-700 dark:text-slate-300 text-xs block mb-1">🏗️ Frame: <span x-text="getComp(buildConfig.frame).name"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.frame).editorial?.why_it_fits"><span class="font-semibold text-blue-600 dark:text-blue-400">Pros:</span> <span x-text="getComp(buildConfig.frame).editorial.why_it_fits"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.frame).editorial?.the_catch"><span class="font-semibold text-amber-600 dark:text-amber-400">Cons:</span> <span x-text="getComp(buildConfig.frame).editorial.the_catch"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.frame).editorial?.best_for"><span class="font-semibold text-violet-600 dark:text-violet-400">Best for:</span> <span x-text="getComp(buildConfig.frame).editorial.best_for"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.frame).notes"><span class="font-semibold text-slate-600 dark:text-slate-400">Notes:</span> <span x-text="getComp(buildConfig.frame).notes"></span></span>
+                    <span class="block text-red-650 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.frame).compatibility?.warnings?.length">
+                      ⚠️ Warnings: <span x-text="getComp(buildConfig.frame).compatibility.warnings.join(' | ')"></span>
+                    </span>
+                  </div>
+                </div>
+              </template>
+              <template x-if="getComp(buildConfig.tank)">
+                <div class="bg-slate-50/50 dark:bg-slate-900/30 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800 flex flex-col justify-between">
+                  <div>
+                    <span class="font-bold text-slate-700 dark:text-slate-300 text-xs block mb-1">💧 Tank: <span x-text="getComp(buildConfig.tank).name"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.tank).editorial?.why_it_fits"><span class="font-semibold text-blue-600 dark:text-blue-400">Pros:</span> <span x-text="getComp(buildConfig.tank).editorial.why_it_fits"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.tank).editorial?.the_catch"><span class="font-semibold text-amber-600 dark:text-amber-400">Cons:</span> <span x-text="getComp(buildConfig.tank).editorial.the_catch"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.tank).editorial?.best_for"><span class="font-semibold text-violet-600 dark:text-violet-400">Best for:</span> <span x-text="getComp(buildConfig.tank).editorial.best_for"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.tank).notes"><span class="font-semibold text-slate-600 dark:text-slate-400">Notes:</span> <span x-text="getComp(buildConfig.tank).notes"></span></span>
+                    <span class="block text-red-650 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.tank).compatibility?.warnings?.length">
+                      ⚠️ Warnings: <span x-text="getComp(buildConfig.tank).compatibility.warnings.join(' | ')"></span>
+                    </span>
+                  </div>
+                </div>
+              </template>
+            </div>
           </div>
 
           <!-- Propulsion -->
@@ -373,6 +406,23 @@
                   <option value="8">8 (Octo)</option>
                 </select>
               </div>
+            </div>
+
+            <!-- Component Info Cards -->
+            <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/60 text-[11px] text-slate-500 dark:text-slate-400"
+                 x-show="buildConfig.motor">
+              <template x-if="getComp(buildConfig.motor)">
+                <div class="bg-slate-50/50 dark:bg-slate-900/30 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800">
+                  <span class="font-bold text-slate-700 dark:text-slate-300 text-xs block mb-1">⚡ Motor: <span x-text="getComp(buildConfig.motor).name"></span></span>
+                  <span class="block mb-1" x-show="getComp(buildConfig.motor).editorial?.why_it_fits"><span class="font-semibold text-blue-600 dark:text-blue-400">Pros:</span> <span x-text="getComp(buildConfig.motor).editorial.why_it_fits"></span></span>
+                  <span class="block mb-1" x-show="getComp(buildConfig.motor).editorial?.the_catch"><span class="font-semibold text-amber-600 dark:text-amber-400">Cons:</span> <span x-text="getComp(buildConfig.motor).editorial.the_catch"></span></span>
+                  <span class="block mb-1" x-show="getComp(buildConfig.motor).editorial?.best_for"><span class="font-semibold text-violet-600 dark:text-violet-400">Best for:</span> <span x-text="getComp(buildConfig.motor).editorial.best_for"></span></span>
+                  <span class="block mb-1" x-show="getComp(buildConfig.motor).notes"><span class="font-semibold text-slate-600 dark:text-slate-400">Notes:</span> <span x-text="getComp(buildConfig.motor).notes"></span></span>
+                  <span class="block text-red-650 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.motor).compatibility?.warnings?.length">
+                    ⚠️ Warnings: <span x-text="getComp(buildConfig.motor).compatibility.warnings.join(' | ')"></span>
+                  </span>
+                </div>
+              </template>
             </div>
           </div>
 
@@ -412,6 +462,52 @@
                 </select>
               </div>
             </div>
+
+            <!-- Component Info Cards -->
+            <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/60 grid grid-cols-1 md:grid-cols-3 gap-3 text-[11px] text-slate-500 dark:text-slate-400"
+                 x-show="buildConfig.battery || buildConfig.pump">
+              <template x-if="getComp(buildConfig.battery)">
+                <div class="bg-slate-50/50 dark:bg-slate-900/30 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800 flex flex-col justify-between">
+                  <div>
+                    <span class="font-bold text-slate-700 dark:text-slate-300 text-xs block mb-1">🔋 Battery: <span x-text="getComp(buildConfig.battery).name"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.battery).editorial?.why_it_fits"><span class="font-semibold text-blue-600 dark:text-blue-400">Pros:</span> <span x-text="getComp(buildConfig.battery).editorial.why_it_fits"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.battery).editorial?.the_catch"><span class="font-semibold text-amber-600 dark:text-amber-400">Cons:</span> <span x-text="getComp(buildConfig.battery).editorial.the_catch"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.battery).editorial?.best_for"><span class="font-semibold text-violet-600 dark:text-violet-400">Best for:</span> <span x-text="getComp(buildConfig.battery).editorial.best_for"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.battery).notes"><span class="font-semibold text-slate-600 dark:text-slate-400">Notes:</span> <span x-text="getComp(buildConfig.battery).notes"></span></span>
+                    <span class="block text-red-650 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.battery).compatibility?.warnings?.length">
+                      ⚠️ Warnings: <span x-text="getComp(buildConfig.battery).compatibility.warnings.join(' | ')"></span>
+                    </span>
+                  </div>
+                </div>
+              </template>
+              <template x-if="getComp(getResolvedChargerId())">
+                <div class="bg-slate-50/50 dark:bg-slate-900/30 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800 flex flex-col justify-between">
+                  <div>
+                    <span class="font-bold text-slate-700 dark:text-slate-300 text-xs block mb-1">🔌 Charger (BOM): <span x-text="getComp(getResolvedChargerId()).name"></span></span>
+                    <span class="block mb-1" x-show="getComp(getResolvedChargerId()).editorial?.why_it_fits"><span class="font-semibold text-blue-600 dark:text-blue-400">Pros:</span> <span x-text="getComp(getResolvedChargerId()).editorial.why_it_fits"></span></span>
+                    <span class="block mb-1" x-show="getComp(getResolvedChargerId()).editorial?.the_catch"><span class="font-semibold text-amber-600 dark:text-amber-400">Cons:</span> <span x-text="getComp(getResolvedChargerId()).editorial.the_catch"></span></span>
+                    <span class="block mb-1" x-show="getComp(getResolvedChargerId()).notes"><span class="font-semibold text-slate-600 dark:text-slate-400">Notes:</span> <span x-text="getComp(getResolvedChargerId()).notes"></span></span>
+                    <span class="block text-red-650 dark:text-red-400 font-semibold" x-show="getComp(getResolvedChargerId()).compatibility?.warnings?.length">
+                      ⚠️ Warnings: <span x-text="getComp(getResolvedChargerId()).compatibility.warnings.join(' | ')"></span>
+                    </span>
+                  </div>
+                </div>
+              </template>
+              <template x-if="getComp(buildConfig.pump)">
+                <div class="bg-slate-50/50 dark:bg-slate-900/30 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800 flex flex-col justify-between">
+                  <div>
+                    <span class="font-bold text-slate-700 dark:text-slate-300 text-xs block mb-1">⛲ Pump: <span x-text="getComp(buildConfig.pump).name"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.pump).editorial?.why_it_fits"><span class="font-semibold text-blue-600 dark:text-blue-400">Pros:</span> <span x-text="getComp(buildConfig.pump).editorial.why_it_fits"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.pump).editorial?.the_catch"><span class="font-semibold text-amber-600 dark:text-amber-400">Cons:</span> <span x-text="getComp(buildConfig.pump).editorial.the_catch"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.pump).editorial?.best_for"><span class="font-semibold text-violet-600 dark:text-violet-400">Best for:</span> <span x-text="getComp(buildConfig.pump).editorial.best_for"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.pump).notes"><span class="font-semibold text-slate-600 dark:text-slate-400">Notes:</span> <span x-text="getComp(buildConfig.pump).notes"></span></span>
+                    <span class="block text-red-650 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.pump).compatibility?.warnings?.length">
+                      ⚠️ Warnings: <span x-text="getComp(buildConfig.pump).compatibility.warnings.join(' | ')"></span>
+                    </span>
+                  </div>
+                </div>
+              </template>
+            </div>
           </div>
 
           <!-- Avionics -->
@@ -448,6 +544,53 @@
                 </select>
               </div>
             </div>
+
+            <!-- Component Info Cards -->
+            <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/60 grid grid-cols-1 md:grid-cols-3 gap-3 text-[11px] text-slate-500 dark:text-slate-400"
+                 x-show="buildConfig.fc || buildConfig.gps || buildConfig.pdb">
+              <template x-if="getComp(buildConfig.fc)">
+                <div class="bg-slate-50/50 dark:bg-slate-900/30 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800 flex flex-col justify-between">
+                  <div>
+                    <span class="font-bold text-slate-700 dark:text-slate-300 text-xs block mb-1">🎮 Flight Controller: <span x-text="getComp(buildConfig.fc).name"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.fc).editorial?.why_it_fits"><span class="font-semibold text-blue-600 dark:text-blue-400">Pros:</span> <span x-text="getComp(buildConfig.fc).editorial.why_it_fits"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.fc).editorial?.the_catch"><span class="font-semibold text-amber-600 dark:text-amber-400">Cons:</span> <span x-text="getComp(buildConfig.fc).editorial.the_catch"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.fc).editorial?.best_for"><span class="font-semibold text-violet-600 dark:text-violet-400">Best for:</span> <span x-text="getComp(buildConfig.fc).editorial.best_for"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.fc).notes"><span class="font-semibold text-slate-650 dark:text-slate-400 font-medium">Notes:</span> <span x-text="getComp(buildConfig.fc).notes"></span></span>
+                    <span class="block text-red-650 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.fc).compatibility?.warnings?.length">
+                      ⚠️ Warnings: <span x-text="getComp(buildConfig.fc).compatibility.warnings.join(' | ')"></span>
+                    </span>
+                  </div>
+                </div>
+              </template>
+              <template x-if="getComp(buildConfig.gps)">
+                <div class="bg-slate-50/50 dark:bg-slate-900/30 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800 flex flex-col justify-between">
+                  <div>
+                    <span class="font-bold text-slate-700 dark:text-slate-300 text-xs block mb-1">🛰️ GPS Module: <span x-text="getComp(buildConfig.gps).name"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.gps).editorial?.why_it_fits"><span class="font-semibold text-blue-600 dark:text-blue-400">Pros:</span> <span x-text="getComp(buildConfig.gps).editorial.why_it_fits"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.gps).editorial?.the_catch"><span class="font-semibold text-amber-600 dark:text-amber-400">Cons:</span> <span x-text="getComp(buildConfig.gps).editorial.the_catch"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.gps).editorial?.best_for"><span class="font-semibold text-violet-600 dark:text-violet-400">Best for:</span> <span x-text="getComp(buildConfig.gps).editorial.best_for"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.gps).notes"><span class="font-semibold text-slate-650 dark:text-slate-400 font-medium">Notes:</span> <span x-text="getComp(buildConfig.gps).notes"></span></span>
+                    <span class="block text-red-650 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.gps).compatibility?.warnings?.length">
+                      ⚠️ Warnings: <span x-text="getComp(buildConfig.gps).compatibility.warnings.join(' | ')"></span>
+                    </span>
+                  </div>
+                </div>
+              </template>
+              <template x-if="getComp(buildConfig.pdb)">
+                <div class="bg-slate-50/50 dark:bg-slate-900/30 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800 flex flex-col justify-between">
+                  <div>
+                    <span class="font-bold text-slate-700 dark:text-slate-300 text-xs block mb-1">🔌 PDB: <span x-text="getComp(buildConfig.pdb).name"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.pdb).editorial?.why_it_fits"><span class="font-semibold text-blue-600 dark:text-blue-400">Pros:</span> <span x-text="getComp(buildConfig.pdb).editorial.why_it_fits"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.pdb).editorial?.the_catch"><span class="font-semibold text-amber-600 dark:text-amber-400">Cons:</span> <span x-text="getComp(buildConfig.pdb).editorial.the_catch"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.pdb).editorial?.best_for"><span class="font-semibold text-violet-600 dark:text-violet-400">Best for:</span> <span x-text="getComp(buildConfig.pdb).editorial.best_for"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.pdb).notes"><span class="font-semibold text-slate-650 dark:text-slate-400 font-medium">Notes:</span> <span x-text="getComp(buildConfig.pdb).notes"></span></span>
+                    <span class="block text-red-650 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.pdb).compatibility?.warnings?.length">
+                      ⚠️ Warnings: <span x-text="getComp(buildConfig.pdb).compatibility.warnings.join(' | ')"></span>
+                    </span>
+                  </div>
+                </div>
+              </template>
+            </div>
           </div>
 
           <!-- Camera & Survey Payload -->
@@ -479,12 +622,37 @@
                 </select>
               </div>
             </div>
-            <div x-show="buildConfig.camera || buildConfig.sensor"
-              class="mt-4 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-100 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 space-y-1">
-              <div x-show="buildConfig.camera">🎥 Camera: weight added to dry weight. Trigger: PWM via AUX6 → HDMI.
-              </div>
-              <div x-show="buildConfig.sensor">📡 Sensor: weight added to dry weight. Connection: I2C/Serial/CAN
-                interface.</div>
+            <!-- Component Info Cards -->
+            <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/60 grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px] text-slate-500 dark:text-slate-400"
+                 x-show="buildConfig.camera || buildConfig.sensor">
+              <template x-if="getComp(buildConfig.camera)">
+                <div class="bg-slate-50/50 dark:bg-slate-900/30 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800 flex flex-col justify-between">
+                  <div>
+                    <span class="font-bold text-slate-700 dark:text-slate-300 text-xs block mb-1">🎥 Camera: <span x-text="getComp(buildConfig.camera).name"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.camera).editorial?.why_it_fits"><span class="font-semibold text-blue-600 dark:text-blue-400">Pros:</span> <span x-text="getComp(buildConfig.camera).editorial.why_it_fits"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.camera).editorial?.the_catch"><span class="font-semibold text-amber-600 dark:text-amber-400">Cons:</span> <span x-text="getComp(buildConfig.camera).editorial.the_catch"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.camera).editorial?.best_for"><span class="font-semibold text-violet-600 dark:text-violet-400">Best for:</span> <span x-text="getComp(buildConfig.camera).editorial.best_for"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.camera).notes"><span class="font-semibold text-slate-650 dark:text-slate-400 font-medium">Notes:</span> <span x-text="getComp(buildConfig.camera).notes"></span></span>
+                    <span class="block text-red-650 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.camera).compatibility?.warnings?.length">
+                      ⚠️ Warnings: <span x-text="getComp(buildConfig.camera).compatibility.warnings.join(' | ')"></span>
+                    </span>
+                  </div>
+                </div>
+              </template>
+              <template x-if="getComp(buildConfig.sensor)">
+                <div class="bg-slate-50/50 dark:bg-slate-900/30 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800 flex flex-col justify-between">
+                  <div>
+                    <span class="font-bold text-slate-700 dark:text-slate-300 text-xs block mb-1">📡 Sensor: <span x-text="getComp(buildConfig.sensor).name"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.sensor).editorial?.why_it_fits"><span class="font-semibold text-blue-600 dark:text-blue-400">Pros:</span> <span x-text="getComp(buildConfig.sensor).editorial.why_it_fits"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.sensor).editorial?.the_catch"><span class="font-semibold text-amber-600 dark:text-amber-400">Cons:</span> <span x-text="getComp(buildConfig.sensor).editorial.the_catch"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.sensor).editorial?.best_for"><span class="font-semibold text-violet-600 dark:text-violet-400">Best for:</span> <span x-text="getComp(buildConfig.sensor).editorial.best_for"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.sensor).notes"><span class="font-semibold text-slate-650 dark:text-slate-400 font-medium">Notes:</span> <span x-text="getComp(buildConfig.sensor).notes"></span></span>
+                    <span class="block text-red-650 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.sensor).compatibility?.warnings?.length">
+                      ⚠️ Warnings: <span x-text="getComp(buildConfig.sensor).compatibility.warnings.join(' | ')"></span>
+                    </span>
+                  </div>
+                </div>
+              </template>
             </div>
           </div>
         </div>
@@ -3923,6 +4091,27 @@ Now generate for: </textarea>
             ? 'betafpv_elrs_lite_rx'
             : (config.rc_rx === 'skydroid_t12' ? 'skydroid_t12' : 'frsky_rxsr');
 
+          let chargerId = 'skyrc_pc1260';
+          if (battery) {
+            let batteryS = 0;
+            if (battery.compatibility?.cells) {
+              const match = String(battery.compatibility.cells).match(/(\d+)S/i);
+              if (match) batteryS = parseInt(match[1]);
+            }
+            if (!batteryS && battery.specs?.configuration) {
+              const match = String(battery.specs.configuration).match(/(\d+)S/i);
+              if (match) batteryS = parseInt(match[1]);
+            }
+            if (!batteryS) {
+              batteryS = Math.round((battery.specs?.nominal_voltage_V || battery.specs?.voltage_V || 44.4) / 3.7);
+            }
+            if (batteryS === 14) {
+              chargerId = 'ultrapower_up2800_14s';
+            } else if (batteryS <= 6) {
+              chargerId = 'hobbymate_h6ac_charger';
+            }
+          }
+
           const requiredAccessoryIds = [
             { id: 'mauch_hs200_lv', key: 'current_sensor' },
             { id: 'matek_12v_bec', key: 'bec' },
@@ -3933,7 +4122,7 @@ Now generate for: </textarea>
             { id: 'gps_mast_20cm', key: 'gps_mast' },
             { id: 'battery_strap', key: 'battery_strap' },
             { id: 'teejet_xr11002', key: 'nozzles' },
-            { id: 'skyrc_pc1260', key: 'charger' },
+            { id: chargerId, key: 'charger' },
             { id: 'tool_kit', key: 'tools' },
             { id: 'smoke_stopper', key: 'smoke_stopper' },
             { id: 'prop_balancer', key: 'prop_balancer' },
@@ -4479,6 +4668,26 @@ Now generate for: </textarea>
 
         getComp(id) {
           return this.allComponents.find(c => c.id === id);
+        },
+
+        getResolvedChargerId() {
+          const battery = this.getComp(this.buildConfig.battery);
+          if (!battery) return 'skyrc_pc1260';
+          let batteryS = 0;
+          if (battery.compatibility?.cells) {
+            const match = String(battery.compatibility.cells).match(/(\d+)S/i);
+            if (match) batteryS = parseInt(match[1]);
+          }
+          if (!batteryS && battery.specs?.configuration) {
+            const match = String(battery.specs.configuration).match(/(\d+)S/i);
+            if (match) batteryS = parseInt(match[1]);
+          }
+          if (!batteryS) {
+            batteryS = Math.round((battery.specs?.nominal_voltage_V || battery.specs?.voltage_V || 44.4) / 3.7);
+          }
+          if (batteryS === 14) return 'ultrapower_up2800_14s';
+          if (batteryS <= 6) return 'hobbymate_h6ac_charger';
+          return 'skyrc_pc1260';
         },
 
         recalculate() {
