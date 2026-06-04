@@ -299,8 +299,8 @@
               Physics estimate: <span class="font-mono" x-text="physicsResult?.costFormatted || '—'"></span>
               <template x-if="activePreset?.total_cost && physicsResult?.totalCost">
                 <span
-                  :class="Math.abs(activePreset.total_cost - physicsResult.totalCost) < 12000 ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'"
-                  x-text="Math.abs(activePreset.total_cost - physicsResult.totalCost) < 12000 ? '✓ Close match' : '⚠ Gap: ₹' + Math.abs(activePreset.total_cost - physicsResult.totalCost).toLocaleString('en-IN') + ' (extras not in wizard dropdowns)'"></span>
+                  :class="Math.abs(activePreset.total_cost - physicsResult.totalCost) < (activePreset.id.startsWith('reconciled_') ? 60000 : 12000) ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'"
+                  x-text="Math.abs(activePreset.total_cost - physicsResult.totalCost) < (activePreset.id.startsWith('reconciled_') ? 60000 : 12000) ? '✓ Close match' : '⚠ Gap: ₹' + Math.abs(activePreset.total_cost - physicsResult.totalCost).toLocaleString('en-IN') + ' (extras not in wizard dropdowns)'"></span>
               </template>
             </div>
           </div>
@@ -3915,18 +3915,18 @@ Now generate for: </textarea>
           const selectedIds = new Set([
             config.frame, config.motor, config.battery, config.fc, config.gps,
             config.pdb || 'tarot_tl2996_pdb', config.pump, tank?.id, config.camera, config.sensor,
+            config.rc_rx,
             ...(config.extras || [])
           ].filter(Boolean));
 
           const rcReceiverId = (config.rc_rx === 'elrs' || config.rx === 'betafpv_elrs_lite_rx' || config.rc_rx === 'betafpv_elrs_lite_rx')
             ? 'betafpv_elrs_lite_rx'
-            : 'frsky_rxsr';
+            : (config.rc_rx === 'skydroid_t12' ? 'skydroid_t12' : 'frsky_rxsr');
 
           const requiredAccessoryIds = [
             { id: 'mauch_hs200_lv', key: 'current_sensor' },
             { id: 'matek_12v_bec', key: 'bec' },
             { id: rcReceiverId, key: 'receiver' },
-            { id: 'radiomaster_tx16s_mkii', key: 'rc_transmitter' },
             { id: 'g10_vibration_pads', key: 'vibration_pads' },
             { id: '6awg_wire_harness', key: 'wire_harness' },
             { id: '100a_anl_fuse', key: 'fuse' },
@@ -3940,6 +3940,10 @@ Now generate for: </textarea>
             { id: 'calibration_scale', key: 'scale' },
             { id: 'lipo_safe_bag', key: 'lipo_bag' }
           ];
+
+          if (config.rc_rx !== 'skydroid_t12') {
+            requiredAccessoryIds.push({ id: 'radiomaster_tx16s_mkii', key: 'rc_transmitter' });
+          }
 
           requiredAccessoryIds.forEach(item => {
             if (!selectedIds.has(item.id)) {
@@ -3982,7 +3986,7 @@ Now generate for: </textarea>
               }
 
               let newId = p.id;
-              const defaultIds = ["path_g_a", "path_g_b", "path_a", "path_b", "path_c", "path_d", "path_f", "ph_1", "ph_2", "ph_3", "ph_4", "ph_5"];
+              const defaultIds = ["path_g_a", "path_g_b", "path_a", "path_b", "path_c", "path_d", "path_f", "ph_1", "ph_2", "ph_3", "ph_4", "ph_5", "reconciled_p1", "reconciled_p2", "reconciled_p3"];
               if (defaultIds.includes(newId)) {
                 newId = newId + "_custom_" + Math.floor(Math.random() * 1000);
               }

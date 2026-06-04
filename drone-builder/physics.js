@@ -222,13 +222,14 @@ const PhysicsEngine = {
       const selectedIds = new Set([
         config.frame, config.motor, config.battery, config.fc, config.gps,
         config.pdb || 'tarot_tl2996_pdb', config.pump, tank?.id, config.camera, config.sensor,
+        config.rc_rx,
         ...(config.extras || [])
       ].filter(Boolean));
 
       // Determine correct RC receiver: prefer ELRS if config specifies it, otherwise fall back to FrSky
       const rcReceiverId = (config.rc_rx === 'elrs' || config.rx === 'betafpv_elrs_lite_rx' || config.rc_rx === 'betafpv_elrs_lite_rx')
         ? 'betafpv_elrs_lite_rx'
-        : 'frsky_rxsr';
+        : (config.rc_rx === 'skydroid_t12' ? 'skydroid_t12' : 'frsky_rxsr');
 
       const requiredFlyingAccessoryIds = [
         'mauch_hs200_lv',      // current sensor
@@ -317,19 +318,19 @@ const PhysicsEngine = {
       const selectedIds = new Set([
         config.frame, config.motor, config.battery, config.fc, config.gps,
         config.pdb || 'tarot_tl2996_pdb', config.pump, tank?.id, config.camera, config.sensor,
+        config.rc_rx,
         ...(config.extras || [])
       ].filter(Boolean));
 
       // Determine correct RC receiver: prefer ELRS if config specifies it, otherwise fall back to FrSky
       const rcReceiverId = (config.rc_rx === 'elrs' || config.rx === 'betafpv_elrs_lite_rx' || config.rc_rx === 'betafpv_elrs_lite_rx')
         ? 'betafpv_elrs_lite_rx'
-        : 'frsky_rxsr';
+        : (config.rc_rx === 'skydroid_t12' ? 'skydroid_t12' : 'frsky_rxsr');
 
       const requiredAccessoryIds = [
         'mauch_hs200_lv',       // current sensor
-        'matek_12v_bec',        // BEC (replaced by holybro_10a_bec in research builds, but cost is similar)
+        'matek_12v_bec',        // BEC
         rcReceiverId,           // RC receiver (ELRS or FrSky)
-        'radiomaster_tx16s_mkii', // RC transmitter — always required, not in component selects
         'g10_vibration_pads',   // vibration pads
         '6awg_wire_harness',    // wire harness
         '100a_anl_fuse',        // fuse
@@ -343,6 +344,10 @@ const PhysicsEngine = {
         'calibration_scale',    // calibration scale
         'lipo_safe_bag'         // lipo safe bag
       ];
+
+      if (config.rc_rx !== 'skydroid_t12') {
+        requiredAccessoryIds.push('radiomaster_tx16s_mkii');
+      }
 
       requiredAccessoryIds.forEach(id => {
         if (!selectedIds.has(id)) {
