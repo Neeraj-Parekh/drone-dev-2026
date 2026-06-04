@@ -1742,7 +1742,12 @@ Now generate for: </textarea>
         <!-- Load Presets -->
         <div class="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
           <div class="flex items-center justify-between mb-2">
-            <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Preset Configurations</h2>
+            <div class="flex items-center gap-3">
+              <h2 class="text-lg font-semibold text-slate-900 dark:text-white">Preset Configurations</h2>
+              <button @click="showImportPresetModal = true" class="px-2.5 py-1 bg-blue-50 dark:bg-blue-950 text-blue-750 dark:text-blue-300 border border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all">
+                📥 Import / Add Presets
+              </button>
+            </div>
             <span class="text-xs text-slate-400 dark:text-slate-500">Click a card to preview · Load button sends to
               Build Wizard</span>
           </div>
@@ -1750,18 +1755,89 @@ Now generate for: </textarea>
             Combinations to demo-grade. The 7 legacy paths (G-A, G-B, A, B, C, D, F) are from the v4 COEP analysis; PH-1
             to PH-5 are new optimised builds.</p>
 
+          <!-- Filter & Sort Panel -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-5 p-4 bg-slate-50 dark:bg-slate-900/40 rounded-xl border border-slate-200 dark:border-slate-700 text-xs">
+            <div>
+              <label class="block font-medium text-slate-700 dark:text-slate-350 mb-1">Budget Bracket</label>
+              <select x-model="presetFilterBudget" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-650 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 dark:text-slate-200">
+                <option value="all">All Budgets</option>
+                <option value="under3">Under ₹3 Lakh (Budget)</option>
+                <option value="3to4">₹3–4 Lakh (Mid-Tier)</option>
+                <option value="4to5">₹4–5 Lakh (Premium)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-medium text-slate-700 dark:text-slate-350 mb-1">Architecture</label>
+              <select x-model="presetFilterArch" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-650 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 dark:text-slate-200">
+                <option value="all">All Layouts</option>
+                <option value="quad">Quadcopter (4-axis)</option>
+                <option value="hexa">Hexacopter (6-axis)</option>
+                <option value="octo">Coaxial Octocopter (8-axis)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-medium text-slate-700 dark:text-slate-350 mb-1">Primary Use Case</label>
+              <select x-model="presetFilterUse" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-650 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 dark:text-slate-200">
+                <option value="all">All Use Cases</option>
+                <option value="spray">Agri Spraying (10L+)</option>
+                <option value="survey">Survey & Mapping (≤7L)</option>
+                <option value="research">R&D / Open-source</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-medium text-slate-700 dark:text-slate-350 mb-1">Sourcing Ease</label>
+              <select x-model="presetFilterSourcing" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-650 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 dark:text-slate-200">
+                <option value="all">All Sourcing</option>
+                <option value="india">In-Stock India Only</option>
+                <option value="import">Includes Import Parts</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-medium text-slate-700 dark:text-slate-350 mb-1">Sort By</label>
+              <select x-model="presetSort" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-650 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 dark:text-slate-200">
+                <option value="default">Default Order</option>
+                <option value="cost_asc">Cost: Low to High</option>
+                <option value="cost_desc">Cost: High to Low</option>
+                <option value="flight_desc">Flight Time: High to Low</option>
+                <option value="thrust_desc">Thrust Margin: High to Low</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Comparison Selection Banner -->
+          <div x-show="comparePresetsSelection.length > 0" x-cloak
+               class="mb-5 p-3.5 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl flex items-center justify-between gap-3 text-xs">
+            <div class="text-blue-700 dark:text-blue-300 font-medium">
+              Selected <span class="font-bold font-mono text-sm" x-text="comparePresetsSelection.length"></span> preset(s) for comparison. (Need at least 2)
+            </div>
+            <div class="flex gap-2">
+              <button @click="showComparePresetsModal()" :disabled="comparePresetsSelection.length < 2"
+                      class="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg text-xs font-semibold shadow transition-all">
+                📊 Compare Side-by-Side
+              </button>
+              <button @click="comparePresetsSelection = []" 
+                      class="px-3.5 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-semibold transition-all">
+                Clear Selection
+              </button>
+            </div>
+          </div>
+
           <!-- Preset Cards Grid -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mb-4">
-            <template x-for="preset in presets" :key="preset.id">
+            <template x-for="preset in filteredPresets" :key="preset.id">
               <div @click="selectPreset(preset)"
-                class="border rounded-xl p-3 cursor-pointer transition-all duration-200 select-none" :class="{
+                class="border rounded-xl p-3 cursor-pointer transition-all duration-200 select-none relative" :class="{
                   'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-950/30 shadow-md ring-2 ring-blue-400/30': selectedPreset?.id === preset.id,
                   'border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-sm bg-white dark:bg-slate-800': selectedPreset?.id !== preset.id
                 }">
                 <!-- Header row -->
-                <div class="flex items-start justify-between gap-1 mb-1.5">
-                  <span class="font-semibold text-sm text-slate-900 dark:text-white leading-tight"
-                    x-text="preset.name"></span>
+                <div class="flex items-start justify-between gap-1.5 mb-1.5">
+                  <div class="flex items-start gap-1.5 min-w-0">
+                    <input type="checkbox" :value="preset.id" x-model="comparePresetsSelection" @click.stop
+                           class="mt-0.5 rounded border-slate-300 dark:border-slate-650 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5 shrink-0">
+                    <span class="font-semibold text-sm text-slate-900 dark:text-white leading-tight break-words"
+                      x-text="preset.name"></span>
+                  </div>
                   <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold shrink-0 mt-0.5" :class="{
                       'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300': preset.status === 'SELECTED' || preset.status === 'RECOMMENDED',
                       'bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300': preset.status === 'Combinations',
@@ -1841,51 +1917,118 @@ Now generate for: </textarea>
 
                   <!-- OVERVIEW TAB -->
                   <div x-show="presetDetailTab === 'overview'">
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-5">
-                      <div class="bg-slate-50 dark:bg-slate-900/60 rounded-lg p-3 text-center">
-                        <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Total Cost</div>
-                        <div class="font-mono font-bold text-lg text-slate-900 dark:text-white"
-                          x-text="'₹' + (selectedPreset.total_cost||0).toLocaleString('en-IN')"></div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                      <!-- Left column: Stats, Notes, and Gauges -->
+                      <div class="lg:col-span-2 space-y-4">
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                          <div class="bg-slate-50 dark:bg-slate-900/60 rounded-lg p-3 text-center">
+                            <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Total Cost</div>
+                            <div class="font-mono font-bold text-lg text-slate-900 dark:text-white"
+                              x-text="'₹' + (selectedPreset.total_cost||0).toLocaleString('en-IN')"></div>
+                          </div>
+                          <div class="bg-slate-50 dark:bg-slate-900/60 rounded-lg p-3 text-center">
+                            <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Flight Time</div>
+                            <div class="font-mono font-bold text-lg text-slate-900 dark:text-white"
+                              x-text="(selectedPreset.result?.flightTime_min || '—') + ' min'"></div>
+                          </div>
+                          <div class="bg-slate-50 dark:bg-slate-900/60 rounded-lg p-3 text-center">
+                            <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Est. MTOW</div>
+                            <div class="font-mono font-bold text-lg text-slate-900 dark:text-white"
+                              x-text="(selectedPreset.result?.mtow_kg || '—') + ' kg'"></div>
+                          </div>
+                          <div class="bg-slate-50 dark:bg-slate-900/60 rounded-lg p-3 text-center">
+                            <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Thrust Margin</div>
+                            <div class="font-mono font-bold text-lg"
+                              :class="parseFloat(selectedPreset.result?.thrustMargin) >= 2.0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'"
+                              x-text="(selectedPreset.result?.thrustMargin || '—') + 'x'"></div>
+                          </div>
+                        </div>
+
+                        <!-- Gauges Grid -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                          <!-- Frame compliance gauge -->
+                          <div class="bg-slate-50 dark:bg-slate-900/40 rounded-xl p-3.5 border border-slate-150 dark:border-slate-750">
+                            <div class="flex justify-between items-center text-xs mb-1.5">
+                              <span class="font-semibold text-slate-700 dark:text-slate-300">Frame Limit Compliance</span>
+                              <span class="font-bold text-slate-900 dark:text-white" x-text="((selectedPreset.result?.mtow_g / selectedPreset.result?.frameMTOW_g) * 100).toFixed(1) + '%'"></span>
+                            </div>
+                            <div class="w-full bg-slate-200 dark:bg-slate-750 h-2 rounded-full overflow-hidden mb-2">
+                              <div class="h-full rounded-full transition-all duration-300"
+                                   :class="{
+                                     'bg-emerald-500': (selectedPreset.result?.mtow_g / selectedPreset.result?.frameMTOW_g) < 0.9,
+                                     'bg-amber-500': (selectedPreset.result?.mtow_g / selectedPreset.result?.frameMTOW_g) >= 0.9 && (selectedPreset.result?.mtow_g / selectedPreset.result?.frameMTOW_g) <= 1.0,
+                                     'bg-red-500': (selectedPreset.result?.mtow_g / selectedPreset.result?.frameMTOW_g) > 1.0
+                                   }"
+                                   :style="'width: ' + Math.min(100, (selectedPreset.result?.mtow_g / selectedPreset.result?.frameMTOW_g) * 100) + '%'">
+                              </div>
+                            </div>
+                            <div class="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">
+                              MTOW: <strong class="font-mono text-slate-800 dark:text-slate-250" x-text="selectedPreset.result?.mtow_kg + ' kg'"></strong> / Max: <strong class="font-mono text-slate-850 dark:text-slate-250" x-text="selectedPreset.result?.frameMTOW_kg + ' kg'"></strong>
+                              <span x-show="selectedPreset.result?.frameExceeds" class="text-red-500 block font-bold mt-1">⚠️ Frame overloaded! Structural failure risk.</span>
+                              <span x-show="!selectedPreset.result?.frameExceeds && (selectedPreset.result?.mtow_g / selectedPreset.result?.frameMTOW_g) >= 0.9" class="text-amber-600 dark:text-amber-400 block font-semibold mt-1">⚠️ Close to structural limit. Minimize add-on payload.</span>
+                              <span x-show="!(selectedPreset.result?.mtow_g / selectedPreset.result?.frameMTOW_g) >= 0.9" class="text-emerald-600 dark:text-emerald-450 block font-semibold mt-1">✓ Safe structural headroom.</span>
+                            </div>
+                          </div>
+
+                          <!-- Hover throttle / motor load gauge -->
+                          <div class="bg-slate-50 dark:bg-slate-900/40 rounded-xl p-3.5 border border-slate-150 dark:border-slate-750">
+                            <div class="flex justify-between items-center text-xs mb-1.5">
+                              <span class="font-semibold text-slate-700 dark:text-slate-300">Hover Motor Load</span>
+                              <span class="font-bold text-slate-900 dark:text-white" x-text="(parseFloat(selectedPreset.result?.hoverThrottle) * 100).toFixed(1) + '%'"></span>
+                            </div>
+                            <div class="w-full bg-slate-200 dark:bg-slate-750 h-2 rounded-full overflow-hidden mb-2">
+                              <div class="h-full rounded-full transition-all duration-300"
+                                   :class="{
+                                     'bg-emerald-500': parseFloat(selectedPreset.result?.hoverThrottle) < 0.5,
+                                     'bg-amber-500': parseFloat(selectedPreset.result?.hoverThrottle) >= 0.5 && parseFloat(selectedPreset.result?.hoverThrottle) <= 0.65,
+                                     'bg-red-500': parseFloat(selectedPreset.result?.hoverThrottle) > 0.65
+                                   }"
+                                   :style="'width: ' + Math.min(100, parseFloat(selectedPreset.result?.hoverThrottle) * 100) + '%'">
+                              </div>
+                            </div>
+                            <div class="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">
+                              Hover Thrust: <strong class="font-mono text-slate-800 dark:text-slate-250" x-text="selectedPreset.result?.hoverThrustPerMotor_g + 'g'"></strong> / Max: <strong class="font-mono text-slate-850 dark:text-slate-250" x-text="selectedPreset.result?.maxThrustPerMotor_g + 'g'"></strong>
+                              <span x-show="parseFloat(selectedPreset.result?.hoverThrottle) > 0.65" class="text-red-500 block font-bold mt-1">⚠️ Motor overloaded at hover! Underpowered build.</span>
+                              <span x-show="! (parseFloat(selectedPreset.result?.hoverThrottle) > 0.65) && parseFloat(selectedPreset.result?.hoverThrottle) >= 0.5" class="text-amber-600 dark:text-amber-400 block font-semibold mt-1">⚠️ Moderate motor load. Decreased agility.</span>
+                              <span x-show="parseFloat(selectedPreset.result?.hoverThrottle) < 0.5" class="text-emerald-600 dark:text-emerald-450 block font-semibold mt-1">✓ Excellent motor safety margins.</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4 text-sm text-amber-900 dark:text-amber-200">
+                          <div class="font-semibold text-xs text-amber-700 dark:text-amber-400 mb-1 uppercase tracking-wide">
+                            Engineering Notes
+                          </div>
+                          <p x-text="selectedPreset.notes"></p>
+                        </div>
+
+                        <!-- Verified badge -->
+                        <div class="flex gap-2 flex-wrap">
+                          <span x-show="selectedPreset.v4_verified"
+                            class="inline-flex items-center gap-1 text-xs bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 px-2.5 py-1 rounded-full font-medium">✅
+                            v4 Verified</span>
+                          <span x-show="!selectedPreset.v4_verified"
+                            class="inline-flex items-center gap-1 text-xs bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 px-2.5 py-1 rounded-full font-medium">🔬
+                            New Preset — Not v4 Verified</span>
+                          <span class="inline-flex items-center gap-1 text-xs bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 px-2.5 py-1 rounded-full font-medium"
+                            x-text="'Status: ' + selectedPreset.status"></span>
+                          <span x-show="selectedPreset.config?.tankCapacity_L"
+                            class="inline-flex items-center gap-1 text-xs bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300 px-2.5 py-1 rounded-full font-medium"
+                            x-text="'Tank: ' + selectedPreset.config.tankCapacity_L + 'L'"></span>
+                        </div>
                       </div>
-                      <div class="bg-slate-50 dark:bg-slate-900/60 rounded-lg p-3 text-center">
-                        <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Flight Time</div>
-                        <div class="font-mono font-bold text-lg text-slate-900 dark:text-white"
-                          x-text="(selectedPreset.result?.flightTime_min || '—') + ' min'"></div>
+
+                      <!-- Right column: Radar Chart -->
+                      <div class="bg-slate-50 dark:bg-slate-900/40 rounded-xl p-4 border border-slate-150 dark:border-slate-750 flex flex-col items-center justify-between min-h-[280px]">
+                        <h4 class="text-xs font-bold text-slate-700 dark:text-slate-350 uppercase tracking-wider mb-2 self-start">5-Axis Engineering Radar</h4>
+                        <div class="w-full relative flex items-center justify-center flex-1" style="height: 200px;">
+                          <canvas id="presetRadarChart"></canvas>
+                        </div>
+                        <p class="text-[10px] text-slate-500 dark:text-slate-400 text-center mt-3 leading-snug">
+                          Scores weigh Cost economy, Flight time, Tank volume, Structural safety margins, and Sensor/Avionics density.
+                        </p>
                       </div>
-                      <div class="bg-slate-50 dark:bg-slate-900/60 rounded-lg p-3 text-center">
-                        <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Est. MTOW</div>
-                        <div class="font-mono font-bold text-lg text-slate-900 dark:text-white"
-                          x-text="(selectedPreset.result?.mtow_kg || '—') + ' kg'"></div>
-                      </div>
-                      <div class="bg-slate-50 dark:bg-slate-900/60 rounded-lg p-3 text-center">
-                        <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Thrust Margin</div>
-                        <div class="font-mono font-bold text-lg"
-                          :class="parseFloat(selectedPreset.result?.thrustMargin) >= 2.0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'"
-                          x-text="(selectedPreset.result?.thrustMargin || '—') + 'x'"></div>
-                      </div>
-                    </div>
-                    <!-- Notes -->
-                    <div
-                      class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4 text-sm text-amber-900 dark:text-amber-200">
-                      <div
-                        class="font-semibold text-xs text-amber-700 dark:text-amber-400 mb-1 uppercase tracking-wide">
-                        Engineering Notes</div>
-                      <p x-text="selectedPreset.notes"></p>
-                    </div>
-                    <!-- Verified badge -->
-                    <div class="mt-3 flex gap-2 flex-wrap">
-                      <span x-show="selectedPreset.v4_verified"
-                        class="inline-flex items-center gap-1 text-xs bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 px-2 py-1 rounded-full">✅
-                        v4 Verified</span>
-                      <span x-show="!selectedPreset.v4_verified"
-                        class="inline-flex items-center gap-1 text-xs bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 px-2 py-1 rounded-full">🔬
-                        New Preset — Not v4 Verified</span>
-                      <span
-                        class="inline-flex items-center gap-1 text-xs bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full"
-                        x-text="'Status: ' + selectedPreset.status"></span>
-                      <span x-show="selectedPreset.config?.tankCapacity_L"
-                        class="inline-flex items-center gap-1 text-xs bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300 px-2 py-1 rounded-full"
-                        x-text="'Tank: ' + selectedPreset.config.tankCapacity_L + 'L'"></span>
                     </div>
                   </div>
 
@@ -2017,6 +2160,61 @@ Now generate for: </textarea>
                   </div>
 
                 </div><!-- end tab content -->
+
+                <!-- Dynamic Upgrade Ladder section -->
+                <div class="mt-2 border-t border-slate-200 dark:border-slate-700 p-5 bg-slate-50 dark:bg-slate-900/30">
+                  <h3 class="text-xs font-bold text-slate-800 dark:text-slate-350 uppercase tracking-wider mb-2">🛠 Interactive Upgrade Path Visualizer</h3>
+                  <p class="text-[10px] text-slate-500 dark:text-slate-400 mb-4">Calculated dynamically based on cost progression for the active build family. Click on any preset node to select it, or click the green arrows to see the exact component swaps.</p>
+                  
+                  <div class="flex flex-wrap items-center justify-center gap-y-4 gap-x-2">
+                    <template x-for="(p, idx) in getUpgradeLadder()" :key="p.id">
+                      <div class="flex items-center">
+                        <!-- Node -->
+                        <div @click="selectPreset(p)" 
+                             class="px-3.5 py-2.5 rounded-xl border-2 transition-all duration-200 cursor-pointer text-center flex flex-col items-center justify-center select-none"
+                             :class="{
+                               'border-blue-600 bg-blue-600 text-white shadow-md scale-105 font-semibold': selectedPreset?.id === p.id,
+                               'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-850 text-slate-700 dark:text-slate-350 hover:border-slate-350 hover:bg-slate-50': selectedPreset?.id !== p.id
+                             }">
+                          <span class="text-xs" x-text="p.name.replace(' (Recommended)', '').replace('    combined', '')"></span>
+                          <span class="text-[10px] opacity-80 mt-0.5 font-mono" x-text="'₹' + (p.total_cost || 0).toLocaleString('en-IN')"></span>
+                        </div>
+                        
+                        <!-- Connector Line/Arrow -->
+                        <div x-show="idx < getUpgradeLadder().length - 1" class="flex items-center px-1">
+                          <button @click="showUpgradeDelta(p, getUpgradeLadder()[idx+1])"
+                                  class="w-7 h-7 rounded-full bg-emerald-100 dark:bg-emerald-950 border border-emerald-300 dark:border-emerald-800 hover:bg-emerald-200 dark:hover:bg-emerald-900 text-emerald-700 dark:text-emerald-300 font-bold text-xs flex items-center justify-center transition-all shadow-sm"
+                                  title="Click to view component swaps">
+                            ➔
+                          </button>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                  
+                  <!-- Upgrade delta popup card -->
+                  <div x-show="activeUpgradeDelta" x-transition x-cloak
+                       class="mt-4 p-4 border border-emerald-250 dark:border-emerald-900 bg-emerald-50/40 dark:bg-emerald-950/20 rounded-xl text-xs">
+                    <div class="flex justify-between items-start mb-2 gap-3">
+                      <div>
+                        <h4 class="text-xs font-bold text-emerald-800 dark:text-emerald-450 uppercase tracking-wider">Upgrade Swaps & Deltas</h4>
+                        <div class="text-[11px] text-slate-650 dark:text-slate-400 mt-0.5">
+                          Transition from <strong x-text="activeUpgradeDelta.fromName"></strong> to <strong x-text="activeUpgradeDelta.toName"></strong>
+                        </div>
+                      </div>
+                      <span class="text-xs font-bold font-mono text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/30 px-2.5 py-1 rounded-lg shrink-0"
+                            x-text="'+ ₹' + activeUpgradeDelta.costDelta.toLocaleString('en-IN')"></span>
+                    </div>
+                    <ul class="space-y-1.5 mt-3">
+                      <template x-for="swap in activeUpgradeDelta.swaps" :key="swap">
+                        <li class="text-xs text-slate-700 dark:text-slate-350 flex items-start gap-2">
+                          <span class="text-emerald-500 shrink-0 mt-0.5">•</span>
+                          <span x-text="swap"></span>
+                        </li>
+                      </template>
+                    </ul>
+                  </div>
+                </div>
               </div>
             </template>
           </div><!-- end detail panel -->
@@ -3100,6 +3298,17 @@ Now generate for: </textarea>
         presets: [],
         selectedPreset: null,
         presetDetailTab: 'overview',
+        presetFilterBudget: 'all',
+        presetFilterArch: 'all',
+        presetFilterUse: 'all',
+        presetFilterSourcing: 'all',
+        presetSort: 'default',
+        comparePresetsSelection: [],
+        showPresetsCompareModal: false,
+        presetComparisonMatrix: [],
+        activeUpgradeDelta: null,
+        showImportPresetModal: false,
+        presetJsonText: '',
         // Active preset tracking
         activePreset: null,
         loadedPresetConfig: null,
@@ -3562,6 +3771,17 @@ Now generate for: </textarea>
               this.loadedPresetConfig = null;
             }
           }, { deep: true });
+
+          this.$watch('selectedPreset', (preset) => {
+            this.activeUpgradeDelta = null;
+            if (preset) {
+              this.$nextTick(() => {
+                setTimeout(() => {
+                  this.renderPresetRadar(preset);
+                }, 100);
+              });
+            }
+          });
         },
 
         setTheme(mode) {
@@ -3606,10 +3826,472 @@ Now generate for: </textarea>
               return r.json();
             })
             .then(data => {
-              this.presets = data.presets || [];
+              const defaultPresets = data.presets || [];
+              const customPresets = this.safeJSONParse('drone_custom_presets', []);
+              
+              // Filter out duplicate IDs from custom presets
+              const defaultIds = new Set(defaultPresets.map(p => p.id));
+              const filteredCustom = customPresets.filter(p => !defaultIds.has(p.id));
+              
+              this.presets = [...defaultPresets, ...filteredCustom];
               this.recalculatePresets();
             })
-            .catch(err => console.warn('Could not load presets:', err));
+            .catch(err => {
+              console.warn('Could not load default presets, loading custom only:', err);
+              this.presets = this.safeJSONParse('drone_custom_presets', []);
+              this.recalculatePresets();
+            });
+        },
+
+        presetHasImports(p) {
+          if (!p || !p.config) return false;
+          // Check notes & description
+          const importWords = ['import', 'lead time', '30-day'];
+          const notes = (p.notes || '').toLowerCase();
+          const desc = (p.description || '').toLowerCase();
+          if (importWords.some(w => notes.includes(w) || desc.includes(w))) {
+            return true;
+          }
+          // Check actual components
+          if (!this.allComponents) return false;
+          const getComp = (id) => this.allComponents.find(c => c.id === id);
+          const componentsList = [
+            p.config.frame, p.config.motor, p.config.battery, p.config.fc, p.config.gps,
+            p.config.pdb, p.config.pump, p.config.camera, p.config.sensor,
+            ...(p.config.extras || [])
+          ].filter(Boolean);
+          
+          return componentsList.some(id => {
+            const c = getComp(id);
+            return c && (c.stock_status === 'import' || c.lead_time_days > 15);
+          });
+        },
+
+        generatePresetBOM(config) {
+          const bom = {};
+          if (!this.allComponents) return bom;
+          const getComp = (id) => this.allComponents.find(c => c.id === id);
+          
+          const frame = getComp(config.frame);
+          const motor = getComp(config.motor);
+          const battery = getComp(config.battery);
+          const fc = getComp(config.fc);
+          const gps = getComp(config.gps);
+          const pdb = getComp(config.pdb) || getComp('tarot_tl2996_pdb');
+          const pump = getComp(config.pump);
+          const camera = getComp(config.camera);
+          const sensor = getComp(config.sensor);
+          
+          let tank = getComp(config.tank);
+          if (!tank && this.allComponents.length > 0) {
+            const capacity = config.tankCapacity_L ?? 10;
+            tank = this.allComponents.find(c => c.compare_group === 'tank' && (c.specs?.capacity_L === capacity || c.specs?.capacity_l === capacity));
+            if (!tank && capacity <= 7) {
+              tank = getComp('generic_7l_hdpe_tank');
+            }
+          }
+          
+          if (frame) bom['frame'] = frame.price_inr || 0;
+          if (motor) bom['motors'] = (motor.price_inr || 0) * (config.motorCount ?? 6);
+          if (battery) bom['battery'] = (battery.price_inr || 0) * (config.batteryCount ?? 1);
+          if (tank) bom['tank'] = tank.price_inr || 0;
+          if (fc) bom['fc_combo'] = fc.price_inr || 0;
+          if (gps) bom['gps'] = gps.price_inr || 0;
+          if (pdb) bom['pdb'] = pdb.price_inr || 0;
+          if (pump) bom['pump'] = pump.price_inr || 0;
+          if (camera) bom['camera'] = camera.price_inr || 0;
+          if (sensor) bom['sensor'] = sensor.price_inr || 0;
+          
+          if (Array.isArray(config.extras)) {
+            config.extras.forEach(extraId => {
+              const extra = getComp(extraId);
+              if (extra) {
+                bom[extraId] = extra.price_inr || 0;
+              }
+            });
+          }
+          
+          // accessories
+          const selectedIds = new Set([
+            config.frame, config.motor, config.battery, config.fc, config.gps,
+            config.pdb || 'tarot_tl2996_pdb', config.pump, tank?.id, config.camera, config.sensor,
+            ...(config.extras || [])
+          ].filter(Boolean));
+
+          const rcReceiverId = (config.rc_rx === 'elrs' || config.rx === 'betafpv_elrs_lite_rx' || config.rc_rx === 'betafpv_elrs_lite_rx')
+            ? 'betafpv_elrs_lite_rx'
+            : 'frsky_rxsr';
+
+          const requiredAccessoryIds = [
+            { id: 'mauch_hs200_lv', key: 'current_sensor' },
+            { id: 'matek_12v_bec', key: 'bec' },
+            { id: rcReceiverId, key: 'receiver' },
+            { id: 'radiomaster_tx16s_mkii', key: 'rc_transmitter' },
+            { id: 'g10_vibration_pads', key: 'vibration_pads' },
+            { id: '6awg_wire_harness', key: 'wire_harness' },
+            { id: '100a_anl_fuse', key: 'fuse' },
+            { id: 'gps_mast_20cm', key: 'gps_mast' },
+            { id: 'battery_strap', key: 'battery_strap' },
+            { id: 'teejet_xr11002', key: 'nozzles' },
+            { id: 'skyrc_pc1260', key: 'charger' },
+            { id: 'tool_kit', key: 'tools' },
+            { id: 'smoke_stopper', key: 'smoke_stopper' },
+            { id: 'prop_balancer', key: 'prop_balancer' },
+            { id: 'calibration_scale', key: 'scale' },
+            { id: 'lipo_safe_bag', key: 'lipo_bag' }
+          ];
+
+          requiredAccessoryIds.forEach(item => {
+            if (!selectedIds.has(item.id)) {
+              const c = getComp(item.id);
+              if (c) {
+                bom[item.key] = c.price_inr || 0;
+              }
+            }
+          });
+
+          return bom;
+        },
+
+        importPresetsJSON(jsonStr) {
+          try {
+            if (!jsonStr || !jsonStr.trim()) throw new Error("JSON input is empty.");
+            const data = JSON.parse(jsonStr);
+            let importedList = [];
+            if (Array.isArray(data)) {
+              importedList = data;
+            } else if (data && Array.isArray(data.presets)) {
+              importedList = data.presets;
+            } else if (data && typeof data === 'object') {
+              importedList = [data];
+            } else {
+              throw new Error("Invalid format. Expected a preset object or array of presets.");
+            }
+
+            if (importedList.length === 0) {
+              throw new Error("No presets found to import.");
+            }
+
+            const customPresets = this.safeJSONParse('drone_custom_presets', []);
+            let count = 0;
+
+            importedList.forEach(p => {
+              if (!p.id || !p.name || !p.config) {
+                console.warn("Skipping invalid preset (requires id, name, and config):", p);
+                return;
+              }
+
+              let newId = p.id;
+              const defaultIds = ["path_g_a", "path_g_b", "path_a", "path_b", "path_c", "path_d", "path_f", "ph_1", "ph_2", "ph_3", "ph_4", "ph_5"];
+              if (defaultIds.includes(newId)) {
+                newId = newId + "_custom_" + Math.floor(Math.random() * 1000);
+              }
+
+              const existingIdx = customPresets.findIndex(x => x.id === newId);
+              
+              if (!p.bom) {
+                p.bom = this.generatePresetBOM(p.config);
+              }
+
+              if (!p.total_cost) {
+                const totalCost = this.allComponents && this.allComponents.length > 0 
+                  ? PhysicsEngine.calculateCost(p.config, this.allComponents)
+                  : Object.values(p.bom).reduce((a, b) => a + b, 0);
+                p.total_cost = totalCost;
+              }
+
+              const newPresetObj = {
+                id: newId,
+                name: p.name,
+                description: p.description || '',
+                status: p.status || 'Combinations',
+                config: p.config,
+                bom: p.bom,
+                total_cost: p.total_cost,
+                v4_verified: p.v4_verified ?? false,
+                notes: p.notes || '',
+                pros: p.pros || [],
+                cons: p.cons || [],
+                Combinations_notes: p.Combinations_notes || []
+              };
+
+              if (existingIdx >= 0) {
+                customPresets[existingIdx] = newPresetObj;
+              } else {
+                customPresets.push(newPresetObj);
+              }
+              count++;
+            });
+
+            if (count === 0) {
+              throw new Error("No valid presets were imported. Check if 'id', 'name', and 'config' properties are present.");
+            }
+
+            localStorage.setItem('drone_custom_presets', JSON.stringify(customPresets));
+            this.loadPresets();
+            alert(`Successfully imported/updated ${count} preset(s)!`);
+            this.presetJsonText = '';
+            this.showImportPresetModal = false;
+          } catch (e) {
+            alert("Error importing presets: " + e.message);
+          }
+        },
+
+        handlePresetFileUpload(event) {
+          const file = event.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            this.presetJsonText = e.target.result;
+          };
+          reader.readAsText(file);
+        },
+
+        resetDefaultPresets() {
+          if (confirm("Are you sure you want to delete all custom presets and reset to the defaults?")) {
+            localStorage.removeItem('drone_custom_presets');
+            this.loadPresets();
+            alert("Presets reset to defaults!");
+            this.showImportPresetModal = false;
+          }
+        },
+
+        get filteredPresets() {
+          if (!this.presets) return [];
+          let list = [...this.presets];
+
+          // Apply filters
+          if (this.presetFilterBudget !== 'all') {
+            list = list.filter(p => {
+              const cost = p.total_cost || 0;
+              if (this.presetFilterBudget === 'under3') return cost < 300000;
+              if (this.presetFilterBudget === '3to4') return cost >= 300000 && cost < 400000;
+              if (this.presetFilterBudget === '4to5') return cost >= 400000 && cost <= 500000;
+              return true;
+            });
+          }
+
+          if (this.presetFilterArch !== 'all') {
+            list = list.filter(p => {
+              const count = p.config?.motorCount || 6;
+              const frameId = p.config?.frame || '';
+              if (this.presetFilterArch === 'quad') return count === 4;
+              if (this.presetFilterArch === 'hexa') return count === 6;
+              if (this.presetFilterArch === 'octo') return count === 8 || frameId.includes('octo') || frameId.includes('octacopter');
+              return true;
+            });
+          }
+
+          if (this.presetFilterUse !== 'all') {
+            list = list.filter(p => {
+              const tank = p.config?.tankCapacity_L || 0;
+              const isResearch = p.status?.includes('RESEARCH') || p.status?.includes('RECOMMENDED');
+              if (this.presetFilterUse === 'spray') return tank >= 10;
+              if (this.presetFilterUse === 'survey') return tank <= 7;
+              if (this.presetFilterUse === 'research') return isResearch;
+              return true;
+            });
+          }
+
+          if (this.presetFilterSourcing !== 'all') {
+            list = list.filter(p => {
+              const hasImport = this.presetHasImports(p);
+              if (this.presetFilterSourcing === 'india') return !hasImport;
+              if (this.presetFilterSourcing === 'import') return hasImport;
+              return true;
+            });
+          }
+
+          // Apply sorting
+          if (this.presetSort === 'cost_asc') {
+            list.sort((a, b) => (a.total_cost || 0) - (b.total_cost || 0));
+          } else if (this.presetSort === 'cost_desc') {
+            list.sort((a, b) => (b.total_cost || 0) - (a.total_cost || 0));
+          } else if (this.presetSort === 'flight_desc') {
+            list.sort((a, b) => (b.result?.flightTime_min || 0) - (a.result?.flightTime_min || 0));
+          } else if (this.presetSort === 'thrust_desc') {
+            list.sort((a, b) => (b.result?.thrustMargin || 0) - (a.result?.thrustMargin || 0));
+          }
+
+          return list;
+        },
+
+        getUpgradeLadder() {
+          if (!this.selectedPreset || !this.presets) return [];
+          const family = this.presets.filter(p => p.v4_verified === this.selectedPreset.v4_verified);
+          return family.sort((a, b) => (a.total_cost || 0) - (b.total_cost || 0));
+        },
+
+        showUpgradeDelta(fromP, toP) {
+          const delta = (toP.total_cost || 0) - (fromP.total_cost || 0);
+          const swaps = [];
+          
+          const keys = [
+            { k: 'frame', label: 'Airframe & Structure' },
+            { k: 'motor', label: 'Propulsion (Motor/ESC)' },
+            { k: 'battery', label: 'Battery System' },
+            { k: 'fc', label: 'Flight Controller' },
+            { k: 'gps', label: 'GPS Navigation' },
+            { k: 'pump', label: 'Agri Pump' },
+            { k: 'tankCapacity_L', label: 'Tank Capacity' },
+            { k: 'motorCount', label: 'Motor Count' },
+            { k: 'batteryCount', label: 'Battery Quantity' }
+          ];
+
+          keys.forEach(item => {
+            const valFrom = fromP.config[item.k];
+            const valTo = toP.config[item.k];
+            if (valFrom !== valTo) {
+              if (item.k === 'tankCapacity_L') {
+                swaps.push(`Expand Tank: from ${valFrom}L to ${valTo}L`);
+              } else if (item.k === 'motorCount') {
+                swaps.push(`Change motor layout: from ${valFrom} motors to ${valTo} motors`);
+              } else if (item.k === 'batteryCount') {
+                swaps.push(`Change battery quantity: from ${valFrom} pack(s) to ${valTo} pack(s)`);
+              } else {
+                const compFrom = this.getComp(valFrom);
+                const compTo = this.getComp(valTo);
+                const nameFrom = compFrom ? compFrom.name : valFrom || 'None';
+                const nameTo = compTo ? compTo.name : valTo || 'None';
+                swaps.push(`Upgrade ${item.label}: swap "${nameFrom}" for "${nameTo}"`);
+              }
+            }
+          });
+
+          const extrasFrom = new Set(fromP.config.extras || []);
+          const extrasTo = new Set(toP.config.extras || []);
+          extrasTo.forEach(e => {
+            if (!extrasFrom.has(e)) {
+              const comp = this.getComp(e);
+              swaps.push(`Add sensor/upgrade: "${comp ? comp.name : e}"`);
+            }
+          });
+
+          this.activeUpgradeDelta = {
+            fromName: fromP.name,
+            toName: toP.name,
+            costDelta: delta,
+            swaps: swaps
+          };
+        },
+
+        calculatePresetScores(preset) {
+          const scores = [];
+          
+          const cost = preset.total_cost || 0;
+          const costScore = Math.max(0, Math.min(100, 100 * (1 - (cost - 200000) / 300000)));
+          scores.push(Math.round(costScore));
+
+          const ft = parseFloat(preset.result?.flightTime_min) || 0;
+          const ftScore = Math.max(0, Math.min(100, 100 * (ft - 5) / 30));
+          scores.push(Math.round(ftScore));
+
+          const cap = preset.config?.tankCapacity_L || 0;
+          const payScore = Math.max(0, Math.min(100, 100 * (cap - 5) / 15));
+          scores.push(Math.round(payScore));
+
+          const tm = parseFloat(preset.result?.thrustMargin) || 1.0;
+          const tmScore = Math.max(0, Math.min(100, 100 * (tm - 1.0) / 3.0));
+          
+          const dry_w = preset.result?.dryWeight_g || 0;
+          const liquid_w = (preset.config?.tankCapacity_L || 0) * 1000;
+          const mtow = dry_w + liquid_w;
+          const f_max = (preset.result?.frameMTOW_g) || 36000;
+          const frameHeadroom = Math.max(0, Math.min(100, 100 * (1 - mtow / f_max)));
+          const safetyScore = (tmScore + frameHeadroom) / 2;
+          scores.push(Math.round(safetyScore));
+
+          let dq = 10;
+          const fcId = preset.config?.fc || '';
+          const gpsId = preset.config?.gps || '';
+          const extras = preset.config?.extras || [];
+          
+          if (fcId === 'cube_orange_plus') dq += 40;
+          else if (fcId === 'pixhawk_6c_combo') dq += 20;
+          
+          if (gpsId === 'here4_rtk') dq += 30;
+          else if (gpsId === 'holybro_m9n') dq += 15;
+          
+          if (extras.includes('benewake_tf03_100')) dq += 20;
+          else if (extras.includes('benewake_tfmini_s')) dq += 10;
+          
+          if (extras.includes('rpi_noir_camera') || extras.includes('rpi_camera')) dq += 10;
+          scores.push(Math.min(100, dq));
+
+          return scores;
+        },
+
+        renderPresetRadar(preset) {
+          if (!preset || !preset.result) return;
+          const scores = this.calculatePresetScores(preset);
+          
+          const ctx = document.getElementById('presetRadarChart');
+          if (!ctx) return;
+
+          if (window.chartInstances.presetRadar) {
+            window.chartInstances.presetRadar.destroy();
+          }
+
+          const isDark = document.documentElement.classList.contains('dark');
+          const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)';
+          const labelColor = isDark ? '#94a3b8' : '#64748b';
+
+          window.chartInstances.presetRadar = new Chart(ctx, {
+            type: 'radar',
+            data: {
+              labels: ['Cost Efficiency', 'Endurance', 'Payload Volume', 'Safety Margin', 'Data Quality'],
+              datasets: [{
+                label: preset.name,
+                data: scores,
+                backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                borderColor: 'rgba(59, 130, 246, 0.8)',
+                borderWidth: 2,
+                pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                pointRadius: 3
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: { display: false }
+              },
+              scales: {
+                r: {
+                  min: 0,
+                  max: 100,
+                  ticks: { display: false, stepSize: 20 },
+                  grid: { color: gridColor },
+                  angleLines: { color: gridColor },
+                  pointLabels: {
+                    color: labelColor,
+                    font: { size: 10, weight: 'semibold' }
+                  }
+                }
+              }
+            }
+          });
+        },
+
+        showComparePresetsModal() {
+          const matrix = [];
+          this.comparePresetsSelection.forEach(id => {
+            const p = this.presets.find(x => x.id === id);
+            if (p) {
+              const scores = this.calculatePresetScores(p);
+              const importWords = ['import', 'lead time', '30-day'];
+              const notes = (p.notes || '').toLowerCase();
+              const hasImport = importWords.some(w => notes.includes(w)) || p.description.toLowerCase().includes('import');
+              
+              matrix.push({
+                ...p,
+                scores: scores,
+                hasImport: hasImport
+              });
+            }
+          });
+          this.presetComparisonMatrix = matrix;
+          this.showPresetsCompareModal = true;
         },
 
         recalculatePresets() {
@@ -3617,6 +4299,12 @@ Now generate for: </textarea>
           this.presets.forEach(p => {
             try {
               p.result = PhysicsEngine.calculate(p.config, this.allComponents);
+              if (p.result && p.result.totalCost_INR) {
+                if (!p.total_cost) p.total_cost = p.result.totalCost_INR;
+              }
+              if (!p.bom || Object.keys(p.bom).length === 0) {
+                p.bom = this.generatePresetBOM(p.config);
+              }
             } catch (e) {
               p.result = { error: e.message };
             }
@@ -5363,13 +6051,315 @@ Now generate for: </textarea>
               }
             }
           });
-        }
       }
+    }
+  }
+  </script>
 
-      buildLegend('costLegend', costLabels, costValues, costColors, cTotal, fmtCost);
-      if (data && typeof data.updateChartThemes === 'function') {
-        data.updateChartThemes();
+  <!-- Import Presets Modal -->
+  <div x-show="showImportPresetModal" 
+       class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+       x-transition x-cloak>
+    <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700 flex flex-col"
+         @click.outside="showImportPresetModal = false">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-4 bg-slate-50 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+        <div>
+          <h3 class="text-base font-bold text-slate-900 dark:text-white">📥 Import Custom Presets</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Upload a JSON file or paste preset configurations directly.</p>
+        </div>
+        <button @click="showImportPresetModal = false" 
+                class="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-650 dark:text-slate-250 hover:bg-slate-300 dark:hover:bg-slate-650 flex items-center justify-center font-bold text-sm transition-all">✕</button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 space-y-4">
+        <!-- Option 1: File Upload -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1.5">Option 1: Upload JSON File</label>
+          <div class="border-2 border-dashed border-slate-300 dark:border-slate-650 rounded-xl p-4 text-center hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-all cursor-pointer relative">
+            <input type="file" accept=".json" @change="handlePresetFileUpload($event)" 
+                   class="absolute inset-0 opacity-0 cursor-pointer w-full h-full">
+            <div class="text-slate-550 dark:text-slate-350">
+              <span class="text-2xl block mb-1">📄</span>
+              <span class="text-xs font-semibold text-blue-600 dark:text-blue-400">Click to browse</span> or drag and drop .json here
+            </div>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="flex items-center text-slate-400 dark:text-slate-550 text-[10px] uppercase font-bold tracking-wider my-2">
+          <div class="flex-grow border-t border-slate-200 dark:border-slate-700 mr-2"></div>
+          OR
+          <div class="flex-grow border-t border-slate-200 dark:border-slate-700 ml-2"></div>
+        </div>
+
+        <!-- Option 2: Paste JSON Text -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1.5">Option 2: Paste JSON Text</label>
+          <textarea x-model="presetJsonText" rows="6" 
+                    class="w-full bg-slate-550 dark:bg-slate-900 border border-slate-300 dark:border-slate-650 rounded-xl p-3 font-mono text-[10px] text-slate-750 dark:text-slate-300 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                    placeholder='[
+  {
+    "id": "my_custom_hexa",
+    "name": "Custom Hexacopter v1",
+    "description": "My custom optimized build...",
+    "status": "RESEARCH",
+    "config": {
+      "frame": "eft_e616p_frame",
+      "motor": "hobbywing_x8_combo_cw",
+      "motorCount": 6,
+      "battery": "tattu_30ah_semi_solid",
+      "batteryCount": 1,
+      "fc": "pixhawk_6c_combo",
+      "gps": "hglrc_m100_5883",
+      "pdb": "tarot_tl2996_pdb",
+      "pump": "hobbywing_5l_pump",
+      "tankCapacity_L": 10
+    }
+  }
+]'></textarea>
+        </div>
+
+        <div class="text-[10px] text-slate-500 dark:text-slate-450 leading-tight">
+          💡 <strong>Tip:</strong> If the JSON does not contain <code>total_cost</code> or <code>bom</code>, the builder will calculate them dynamically from your selections.
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-6 py-4 bg-slate-50 dark:bg-slate-900/60 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
+        <button @click="resetDefaultPresets()" 
+                class="px-3.5 py-2 bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-300 border border-red-200/50 dark:border-red-900/40 hover:bg-red-100 dark:hover:bg-red-950/40 rounded-xl text-xs font-semibold transition-all">
+          Reset to Defaults
+        </button>
+        <div class="flex gap-2">
+          <button @click="showImportPresetModal = false" 
+                  class="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-750 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-650 rounded-xl text-xs font-semibold transition-all">Cancel</button>
+          <button @click="importPresetsJSON(presetJsonText)" :disabled="!presetJsonText.trim()"
+                  class="px-4 py-2 bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow transition-all">Import Presets</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comparison Matrix Modal -->
+  <div x-show="showPresetsCompareModal" 
+       class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+       x-transition x-cloak>
+    <div class="bg-white dark:bg-slate-800 rounded-2xl max-w-6xl w-full shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-700 flex flex-col"
+         style="max-height: 90vh;" @click.outside="showPresetsCompareModal = false">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-4 bg-slate-50 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+        <div>
+          <h3 class="text-base font-bold text-slate-900 dark:text-white">Side-by-Side Preset Comparison Matrix</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-450 mt-0.5">Compare specifications, performance calculations, and regulatory/sourcing ease across selected paths.</p>
+        </div>
+        <button @click="showPresetsCompareModal = false" 
+                class="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-650 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-650 flex items-center justify-center font-bold text-sm transition-all">✕</button>
+      </div>
+
+      <!-- Modal Body (Table scrollable) -->
+      <div class="p-6 overflow-y-auto flex-1">
+        <table class="w-full text-xs text-left border-collapse">
+          <thead>
+            <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-450">
+              <th class="py-3 px-4 font-semibold w-1/5">Metric / Spec</th>
+              <template x-for="p in presetComparisonMatrix" :key="p.id">
+                <th class="py-3 px-4 font-bold text-slate-900 dark:text-white text-center w-1/4">
+                  <div x-text="p.name"></div>
+                  <span class="text-[9px] px-2 py-0.5 rounded-full font-bold uppercase mt-1 inline-block"
+                        :class="{
+                          'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300': p.status === 'SELECTED' || p.status === 'RECOMMENDED',
+                          'bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300': p.status === 'Combinations',
+                          'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300': p.status === 'RESEARCH',
+                          'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300': p.status === 'PREMIUM',
+                          'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300': p.status === 'PROTO',
+                          'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300': p.status === 'EXCEEDS FRAME' || p.status === 'NOT HEXA',
+                          'bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300': p.status === 'SHORT FLIGHT'
+                        }"
+                        x-text="p.status"></span>
+                </th>
+              </template>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-150 dark:divide-slate-750 text-slate-700 dark:text-slate-300">
+            <!-- Row 1: Cost -->
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-900/20">
+              <td class="py-3 px-4 font-semibold text-slate-900 dark:text-white">BOM Cost</td>
+              <template x-for="p in presetComparisonMatrix" :key="p.id">
+                <td class="py-3 px-4 text-center">
+                  <div class="font-mono font-bold text-slate-950 dark:text-white" x-text="'₹' + (p.total_cost || 0).toLocaleString('en-IN')"></div>
+                  <!-- Visual comparison bar -->
+                  <div class="w-full bg-slate-200 dark:bg-slate-750 h-1.5 rounded-full overflow-hidden mt-1.5 max-w-[120px] mx-auto">
+                    <div class="h-full bg-blue-600 rounded-full" :style="'width: ' + ((p.total_cost || 0) / 500000 * 100) + '%'"></div>
+                  </div>
+                </td>
+              </template>
+            </tr>
+            <!-- Row 2: Flight Time -->
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-900/20">
+              <td class="py-3 px-4 font-semibold text-slate-900 dark:text-white">Flight Time</td>
+              <template x-for="p in presetComparisonMatrix" :key="p.id">
+                <td class="py-3 px-4 text-center">
+                  <span class="font-mono font-bold px-2 py-0.5 rounded-md text-xs"
+                        :class="{
+                          'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300': parseFloat(p.result?.flightTime_min) >= 15,
+                          'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300': parseFloat(p.result?.flightTime_min) >= 10 && parseFloat(p.result?.flightTime_min) < 15,
+                          'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300': parseFloat(p.result?.flightTime_min) < 10
+                        }"
+                        x-text="(p.result?.flightTime_min || '—') + ' min'"></span>
+                </td>
+              </template>
+            </tr>
+            <!-- Row 3: Takeoff Weight / Frame Limit -->
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-900/20">
+              <td class="py-3 px-4 font-semibold text-slate-900 dark:text-white">Takeoff Weight (MTOW)</td>
+              <template x-for="p in presetComparisonMatrix" :key="p.id">
+                <td class="py-3 px-4 text-center">
+                  <div class="font-mono font-semibold" x-text="(p.result?.mtow_kg || '—') + ' kg' + ' / Limit: ' + (p.result?.frameMTOW_kg || '—') + ' kg'"></div>
+                  <!-- Visual bar for compliance -->
+                  <div class="w-full bg-slate-200 dark:bg-slate-750 h-1.5 rounded-full overflow-hidden mt-1.5 max-w-[120px] mx-auto">
+                    <div class="h-full rounded-full"
+                         :class="{
+                           'bg-emerald-500': (p.result?.mtow_g / p.result?.frameMTOW_g) < 0.9,
+                           'bg-amber-500': (p.result?.mtow_g / p.result?.frameMTOW_g) >= 0.9 && (p.result?.mtow_g / p.result?.frameMTOW_g) <= 1.0,
+                           'bg-red-500': (p.result?.mtow_g / p.result?.frameMTOW_g) > 1.0
+                         }"
+                         :style="'width: ' + Math.min(100, (p.result?.mtow_g / p.result?.frameMTOW_g) * 100) + '%'"></div>
+                  </div>
+                  <span x-show="p.result?.frameExceeds" class="text-[9px] text-red-500 font-bold block mt-1">⚠️ Frame Overloaded</span>
+                </td>
+              </template>
+            </tr>
+            <!-- Row 4: Hover Throttle & Thrust Margin -->
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-900/20">
+              <td class="py-3 px-4 font-semibold text-slate-900 dark:text-white">Thrust Margin & Hover Throttle</td>
+              <template x-for="p in presetComparisonMatrix" :key="p.id">
+                <td class="py-3 px-4 text-center">
+                  <div class="font-mono font-semibold" x-text="p.result?.thrustMargin + 'x margin / ' + (parseFloat(p.result?.hoverThrottle)*100).toFixed(0) + '% hover'"></div>
+                  <span x-show="parseFloat(p.result?.thrustMargin) < 2.0" class="text-[9px] text-red-500 font-bold block mt-1">⚠️ Low thrust margin</span>
+                </td>
+              </template>
+            </tr>
+            <!-- Row 5: Key Hardware Config -->
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-900/20">
+              <td class="py-3 px-4 font-semibold text-slate-900 dark:text-white">Core Specs</td>
+              <template x-for="p in presetComparisonMatrix" :key="p.id">
+                <td class="py-2.5 px-4 text-center text-[10px] leading-tight space-y-1">
+                  <div><strong>Frame:</strong> <span x-text="getComp(p.config?.frame)?.name.split(' ').slice(0,3).join(' ')"></span></div>
+                  <div><strong>Motors:</strong> <span x-text="getComp(p.config?.motor)?.name.split(' ').slice(0,3).join(' ') + ' (x' + p.config?.motorCount + ')'"></span></div>
+                  <div><strong>FC:</strong> <span x-text="getComp(p.config?.fc)?.name"></span></div>
+                  <div><strong>Battery:</strong> <span x-text="getComp(p.config?.battery)?.name + ' (x' + p.config?.batteryCount + ')'"></span></div>
+                  <div><strong>Tank:</strong> <span x-text="(p.config?.tankCapacity_L || 0) + ' Liters'"></span></div>
+                </td>
+              </template>
+            </tr>
+            <!-- Row 6: Sourcing & Imports -->
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-900/20">
+              <td class="py-3 px-4 font-semibold text-slate-900 dark:text-white">Sourcing Bottlenecks</td>
+              <template x-for="p in presetComparisonMatrix" :key="p.id">
+                <td class="py-3 px-4 text-center">
+                  <span x-show="!p.hasImport" class="text-emerald-700 dark:text-emerald-350 bg-emerald-150/40 dark:bg-emerald-950/20 px-2 py-1 rounded font-semibold text-[10px]">
+                    ✓ In-Stock India Only
+                  </span>
+                  <span x-show="p.hasImport" class="text-amber-700 dark:text-amber-350 bg-amber-150/40 dark:bg-amber-950/20 px-2 py-1 rounded font-semibold text-[10px] block max-w-[140px] mx-auto leading-tight">
+                    ⚠️ Includes imported parts (30d lead time)
+                  </span>
+                </td>
+              </template>
+            </tr>
+            <!-- Row 7: Load Action -->
+            <tr class="bg-slate-50/50 dark:bg-slate-900/10">
+              <td class="py-4 px-4 font-semibold text-slate-900 dark:text-white">Action</td>
+              <template x-for="p in presetComparisonMatrix" :key="p.id">
+                <td class="py-4 px-4 text-center">
+                  <button @click="loadPreset(p); showPresetsCompareModal = false"
+                          class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow">
+                    ⚙️ Load Config
+                  </button>
+                </td>
+              </template>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-6 py-4 bg-slate-50 dark:bg-slate-900/60 border-t border-slate-200 dark:border-slate-700 flex justify-end">
+        <button @click="showPresetsCompareModal = false" 
+                class="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-750 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-650 rounded-xl text-xs font-semibold">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="physics.js"></script>
+  <script>
+    // Global non-reactive storage for Chart.js instances to avoid AlpineJS proxy recursion stack overflows
+    window.chartInstances = {
+      weightChart: null,
+      costChart: null,
+      compareChart: null,
+      multiConfigRadar: null,
+      presetRadar: null
+    };
+
+    function getGridColor() {
+      return document.documentElement.classList.contains('dark') ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+    }
+
+    function getTextColor() {
+      return document.documentElement.classList.contains('dark') ? '#94a3b8' : '#64748b';
+    }
+
+    function fmtWeight(grams) {
+      if (grams >= 1000) return (grams / 1000).toFixed(2) + ' kg';
+      return grams.toFixed(0) + ' g';
+    }
+
+    function fmtCost(inr) {
+      return '₹' + inr.toLocaleString('en-IN');
+    }
+
+    function buildLegend(containerId, labels, values, colors, total, fmtFn) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      el.innerHTML = '';
+      labels.forEach((label, idx) => {
+        const val = values[idx];
+        const pct = ((val / (total || 1)) * 100).toFixed(1);
+        const item = document.createElement('div');
+        item.className = 'flex items-center justify-between text-xs text-slate-650 dark:text-slate-400 py-1 border-b border-slate-100 dark:border-slate-800/40 last:border-0';
+        item.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${colors[idx]}"></span>
+            <span class="capitalize">${label.replace(/_/g, ' ')}</span>
+          </div>
+          <div class="font-mono text-slate-900 dark:text-slate-200">
+            <strong>${fmtFn(val)}</strong> <span class="text-slate-400 dark:text-slate-500 text-[10px]">(${pct}%)</span>
+          </div>
+        `;
+        el.appendChild(item);
+      });
+    }
+
+    function updateChartConfig(chart) {
+      if (!chart) return;
+      const isDark = document.documentElement.classList.contains('dark');
+      const textColor = isDark ? '#94a3b8' : '#64748b';
+      const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+
+      if (chart.options.plugins && chart.options.plugins.datalabels) {
+        chart.options.plugins.datalabels.color = textColor;
       }
+      if (chart.options.scales) {
+        Object.values(chart.options.scales).forEach(scale => {
+          if (scale.ticks) scale.ticks.color = textColor;
+          if (scale.grid) scale.grid.color = gridColor;
+        });
+      }
+      chart.update();
     }
   </script>
 </body>
