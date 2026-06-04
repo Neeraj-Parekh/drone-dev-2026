@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COEP Agricultural Hexacopter - Real-Scale 3D Model</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#070910;overflow:hidden;font-family:Inter,"Segoe UI",system-ui,sans-serif;color:#e8f4ff}
+canvas{display:block;position:absolute;top:0;left:0}
+#ui{position:fixed;top:16px;left:16px;z-index:10;width:330px;max-height:calc(100vh - 32px);overflow:auto;background:rgba(7,9,16,.9);border:1px solid rgba(112,204,255,.28);border-radius:14px;padding:14px 16px;backdrop-filter:blur(10px);box-shadow:0 20px 80px rgba(0,0,0,.35)}
+#ui h1{font-size:14px;color:#7ed7ff;letter-spacing:.08em;margin-bottom:8px;text-transform:uppercase}
+#ui h2{font-size:11px;color:#8fa6b8;margin:14px 0 6px;text-transform:uppercase;letter-spacing:.1em}
+.row{display:flex;justify-content:space-between;gap:12px;font-size:12px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.055)}
+.lbl{color:#91a0ad}.val{font-weight:650;color:#fff;text-align:right}.bad{color:#ff7b73}.ok{color:#80ffa8}.note{font-size:11px;line-height:1.45;color:#a9b6c2;margin-top:8px}.warn{margin-top:10px;padding:9px 10px;background:rgba(255,75,65,.12);border:1px solid rgba(255,75,65,.38);border-radius:10px;color:#ffc0bb;font-size:12px;line-height:1.4}
+#ctrls{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:9px;flex-wrap:wrap;justify-content:center}
+button{background:rgba(8,11,20,.88);border:1px solid rgba(112,204,255,.32);color:#7ed7ff;padding:8px 14px;border-radius:9px;cursor:pointer;font-size:12px;backdrop-filter:blur(10px)}
+button:hover,button.on{background:rgba(112,204,255,.16);border-color:#7ed7ff;color:#fff}
+#lbl{position:fixed;z-index:20;pointer-events:none;background:rgba(0,0,0,.86);border:1px solid rgba(112,204,255,.45);border-radius:7px;padding:7px 10px;font-size:11px;color:#aee7ff;display:none;white-space:nowrap;max-width:380px}
+#tip{position:fixed;right:18px;bottom:18px;z-index:10;color:#5d6b77;font-size:11px;text-align:right;line-height:1.5}
+#fallback{display:none;position:fixed;inset:0;z-index:50;align-items:center;justify-content:center;background:#070910;color:#fff;text-align:center;padding:30px}.card{max-width:520px;background:#111827;border:1px solid #334155;border-radius:14px;padding:28px}.card h2{color:#ff9b91;margin-bottom:10px}.card p{color:#b7c2ce;line-height:1.6}
+@media(max-width:760px){#ui{width:calc(100vw - 24px);left:12px;top:12px;max-height:46vh}#ctrls{bottom:12px;width:100%;padding:0 10px}#tip{display:none}}
+</style>
+</head>
+<body>
+<div id="ui">
+  <h1>Real-Scale Hexacopter Model</h1>
+  <div class="row"><span class="lbl">Scale</span><span class="val">1 Three.js unit = 100 mm</span></div>
+  <div class="row"><span class="lbl">Frame</span><span class="val">EFT E616P</span></div>
+  <div class="row"><span class="lbl">Wheelbase</span><span class="val">1644 mm</span></div>
+  <div class="row"><span class="lbl">Open envelope</span><span class="val">2429 x 2429 x 599 mm</span></div>
+  <div class="row"><span class="lbl">Tank capacity</span><span class="val">16 L</span></div>
+  <h2>Propulsion</h2>
+  <div class="row"><span class="lbl">Motor</span><span class="val">Hobbywing X9 G2L</span></div>
+  <div class="row"><span class="lbl">Motor / fan dia.</span><span class="val">104 / 130 mm</span></div>
+  <div class="row"><span class="lbl">Arm tube</span><span class="val">40 mm OD</span></div>
+  <div class="row"><span class="lbl">Propeller</span><span class="val">MFP 36x11, dia. 914 mm</span></div>
+  <div class="row"><span class="lbl">Adjacent motor spacing</span><span class="val" id="spacingVal">822 mm</span></div>
+  <div class="row"><span class="lbl">Prop clearance</span><span class="val bad" id="clearanceVal">-92 mm</span></div>
+  <div class="warn">Real dimensions reveal a clash: 36 inch prop discs overlap on an E616P 1644 mm hex frame. Use smaller props or a larger frame before fabrication.</div>
+  <h2>Installed Components</h2>
+  <div class="row"><span class="lbl">Battery pack</span><span class="val">3 x 212 x 90.5 x 132 mm</span></div>
+  <div class="row"><span class="lbl">Flight controller</span><span class="val">84.8 x 44 x 12.4 mm</span></div>
+  <div class="row"><span class="lbl">Pump</span><span class="val">SHURflo 8000, 12 VDC</span></div>
+  <div class="row"><span class="lbl">Flow sensor</span><span class="val">YF-S402, 0.5-6 L/min</span></div>
+  <div class="row"><span class="lbl">Nozzles</span><span class="val">4 x TeeJet XR11002</span></div>
+  <h2>Sources Used</h2>
+  <p class="note">EFT: E616P wheelbase, open/folded envelope, 16 L tank, 6.41 kg frame. Hobbywing: X9 G2L motor/fan diameters, 40 mm tube, MFP 36x11 prop. Grepow: Tattu battery dimensions. Holybro: Pixhawk 6C dimensions. Pentair/TeeJet/CERTEON: spray components.</p>
+  <p class="note">Tank body and pump body are represented as dimensioned envelopes where public manufacturer pages do not publish full 3D CAD dimensions. Major fit-critical dimensions are real.</p>
+</div>
+
+<div id="ctrls">
+  <button id="bSpin" class="on">Spin</button>
+  <button id="bWire">Wireframe</button>
+  <button id="bExplode">Explode</button>
+  <button id="bDiscs" class="on">Prop Discs</button>
+  <button id="bReset">Reset View</button>
+</div>
+<div id="lbl"></div>
+<div id="tip">Drag: rotate | Scroll: zoom | Right-drag: pan<br>Red rings = real prop conflict</div>
+<div id="fallback"><div class="card"><h2>WebGL unavailable</h2><p>Open this file in Chrome or Firefox with WebGL enabled. If CDN loading is blocked, serve the folder with <code>python3 -m http.server</code>.</p></div></div>
+
+<script>
+(function(){
+"use strict";
+var autoSpin=true, wireframeOn=false, exploded=false, showDiscs=true, explodeT=0;
+var scene,camera,renderer,controls,drone,raycaster,mouse,labelEl;
+var propGroups=[], propDiscs=[], tracked=[];
+var originals=[];
+
+var canvas=document.createElement("canvas");
+var gl=canvas.getContext("webgl")||canvas.getContext("experimental-webgl");
+if(!gl){document.getElementById("fallback").style.display="flex";return;}
+
+var s1=document.createElement("script");
+s1.src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
+s1.onload=function(){
+  var s2=document.createElement("script");
+  s2.src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js";
+  s2.onload=init;s2.onerror=init;document.head.appendChild(s2);
+};
+s1.onerror=function(){document.getElementById("fallback").style.display="flex";};
+document.head.appendChild(s1);
+
+function init(){
+  var THREE=window.THREE;if(!THREE){document.getElementById("fallback").style.display="flex";return;}
+  var U=.01; // mm to scene units
+  var D={
+    frame:{wheelbase:1644,openX:2429,openZ:2429,height:599,foldX:1091,foldZ:970,foldH:599,tankL:16},
+    arm:{tube:40,bodyRadius:240},
+    motor:{dia:104,fanDia:130,statorDia:96,statorH:16,visualH:78},
+    prop:{dia:914.4,pitch:279.4},
+    battery:{l:212,w:90.5,h:132},
+    pixhawk:{l:84.8,w:44,h:12.4},
+    tank:{l:400,w:250,h:160},
+    pump:{l:190,w:105,h:105},
+    jetson:{l:100,w:80,h:30},
+    radio:{l:57,w:30,h:12.8},
+    flow:{l:58,w:35,h:27},
+    boom:{span:2000,tube:20}
+  };
+  var motorR=D.frame.wheelbase/2;
+  var adjacentSpacing=motorR;
+  var clearance=adjacentSpacing-D.prop.dia;
+  document.getElementById("spacingVal").textContent=Math.round(adjacentSpacing)+" mm";
+  document.getElementById("clearanceVal").textContent=Math.round(clearance)+" mm";
+
+  function mm(v){return v*U;}
+  function mat(color,rough,metal,opacity){return new THREE.MeshStandardMaterial({color:color,roughness:rough == null ? .45 : rough,metalness:metal == null ? .15 : metal,transparent:opacity<1,opacity:opacity==null?1:opacity});}
+  var mCarbon=mat(0x101820,.32,.35),mMetal=mat(0x8d9aa6,.36,.55),mMotor=mat(0x1c1f24,.28,.7),mGreen=mat(0x1f8b55,.38,.2),mBlue=mat(0x173f76,.48,.2),mOrange=mat(0xb36b17,.35,.25),mTank=mat(0x2b7a42,.58,.05,.58),mNoz=mat(0xe3b21c,.35,.45),mPump=mat(0x245d9b,.42,.35),mRed=mat(0xff3b30,.25,.1,.22),mDiscOk=mat(0x79c9ff,.3,.05,.12),mBlack=mat(0x050608,.5,.1);
+
+  scene=new THREE.Scene();scene.background=new THREE.Color(0x070910);scene.fog=new THREE.FogExp2(0x070910,.005);
+  camera=new THREE.PerspectiveCamera(48,innerWidth/innerHeight,.1,1200);camera.position.set(18,13,24);
+  renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;document.body.insertBefore(renderer.domElement,document.body.firstChild);
+  if(THREE.OrbitControls){controls=new THREE.OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.055;controls.minDistance=7;controls.maxDistance=65;}
+  scene.add(new THREE.AmbientLight(0x35445a,.75));
+  var sun=new THREE.DirectionalLight(0xffffff,1.15);sun.position.set(16,24,18);sun.castShadow=true;sun.shadow.mapSize.width=2048;sun.shadow.mapSize.height=2048;sun.shadow.camera.left=-25;sun.shadow.camera.right=25;sun.shadow.camera.top=25;sun.shadow.camera.bottom=-25;scene.add(sun);
+  var fill=new THREE.DirectionalLight(0x4c8dff,.35);fill.position.set(-10,8,-12);scene.add(fill);
+  scene.add(new THREE.GridHelper(36,36,0x193142,0x0d1824));
+
+  drone=new THREE.Group();scene.add(drone);
+
+  function addBox(parent,name,w,h,d,material,x,y,z,label){
+    var mesh=new THREE.Mesh(new THREE.BoxGeometry(mm(w),mm(h),mm(d)),material);mesh.position.set(mm(x||0),mm(y||0),mm(z||0));mesh.castShadow=true;mesh.receiveShadow=true;mesh.userData.lbl=label||name+" - "+w+"x"+h+"x"+d+" mm";parent.add(mesh);return mesh;
+  }
+  function addCyl(parent,name,diam,h,material,x,y,z,label,axis){
+    var mesh=new THREE.Mesh(new THREE.CylinderGeometry(mm(diam/2),mm(diam/2),mm(h),32),material);mesh.position.set(mm(x||0),mm(y||0),mm(z||0));if(axis==="x")mesh.rotation.z=Math.PI/2;if(axis==="z")mesh.rotation.x=Math.PI/2;mesh.castShadow=true;mesh.receiveShadow=true;mesh.userData.lbl=label||name+" - dia. "+diam+" x "+h+" mm";parent.add(mesh);return mesh;
+  }
+  function addLine(parent,x1,y1,z1,x2,y2,z2,color){
+    var g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(mm(x1),mm(y1),mm(z1)),new THREE.Vector3(mm(x2),mm(y2),mm(z2))]);
+    var l=new THREE.Line(g,new THREE.LineBasicMaterial({color:color||0x7ed7ff,transparent:true,opacity:.8}));parent.add(l);return l;
+  }
+  function track(group,dx,dy,dz){originals.push({g:group,p:group.position.clone(),d:new THREE.Vector3(mm(dx),mm(dy),mm(dz))});}
+
+  // Published EFT open envelope, drawn as transparent fit box.
+  var envelope=addBox(drone,"E616P open envelope",D.frame.openX,8,D.frame.openZ,mat(0x2f8cff,.22,.05,.06),0,-310,0,"EFT E616P open footprint - 2429 x 2429 mm");
+  envelope.material.depthWrite=false;
+  addLine(drone,-D.frame.openX/2,-300,-D.frame.openZ/2,D.frame.openX/2,-300,-D.frame.openZ/2,0x2f8cff);
+  addLine(drone,D.frame.openX/2,-300,-D.frame.openZ/2,D.frame.openX/2,-300,D.frame.openZ/2,0x2f8cff);
+  addLine(drone,D.frame.openX/2,-300,D.frame.openZ/2,-D.frame.openX/2,-300,D.frame.openZ/2,0x2f8cff);
+  addLine(drone,-D.frame.openX/2,-300,D.frame.openZ/2,-D.frame.openX/2,-300,-D.frame.openZ/2,0x2f8cff);
+
+  // Central fuselage and tank. Tank is a 16 L volume-equivalent envelope.
+  var center=new THREE.Group();center.userData.lbl="EFT E616P central body - 16 L agri frame";drone.add(center);
+  addCyl(center,"Upper hex plate",520,28,mCarbon,0,95,0,"Central upper plate - visual EFT E-series shell",null);
+  addCyl(center,"Lower hex plate",560,28,mCarbon,0,15,0,"Central lower plate - visual EFT E-series shell",null);
+  addBox(center,"16L tank",D.tank.l,D.tank.h,D.tank.w,mTank,0,-115,0,"16 L HDPE tank - 400 x 250 x 160 mm volume-equivalent envelope");
+  addCyl(center,"Fill cap",90,35,mMetal,0,-15,0,"Tank fill cap - visual",null);
+  track(center,0,0,0);
+
+  // Real battery pack dimensions.
+  var battG=new THREE.Group();battG.userData.lbl="3 x Tattu 12S 30Ah packs - each 212 x 90.5 x 132 mm";drone.add(battG);battG.position.set(0,mm(-245),mm(265));
+  for(var b=0;b<3;b++){
+    var x=(b-1)*(D.battery.l+18);
+    addBox(battG,"Tattu pack",D.battery.l,D.battery.h,D.battery.w,mBlue,x,0,0,"Tattu 12S 30Ah - 212 x 90.5 x 132 mm - 1332 Wh");
+    addBox(battG,"Pack label",D.battery.l-18,4,D.battery.w-14,mat(0x35a3ff,.4,.1),x,68,0,"Battery label strip");
+  }
+  track(battG,0,-330,190);
+
+  // Flight controller and companion computer.
+  var avionics=new THREE.Group();avionics.position.set(0,mm(145),0);avionics.userData.lbl="Avionics stack";drone.add(avionics);
+  addBox(avionics,"Pixhawk 6C",D.pixhawk.l,D.pixhawk.h,D.pixhawk.w,mOrange,0,0,0,"Pixhawk 6C - 84.8 x 44 x 12.4 mm");
+  addBox(avionics,"Jetson Orin Nano envelope",D.jetson.l,D.jetson.h,D.jetson.w,mat(0x1f6b49,.42,.25),0,45,82,"Jetson Orin Nano dev-module envelope - shown for layout");
+  track(avionics,0,270,0);
+
+  // GPS and telemetry mast.
+  var mast=new THREE.Group();mast.userData.lbl="GPS and telemetry mast";drone.add(mast);
+  addCyl(mast,"GPS mast",12,260,mMetal,0,270,0,"GPS mast - 260 mm visual carbon tube",null);
+  addBox(mast,"GPS puck",70,18,70,mat(0x356a3c,.32,.2),0,415,0,"GPS module envelope - mounted above prop wash");
+  addCyl(mast,"RFD antenna",8,220,mMetal,-160,250,0,"RFD868x antenna - 865-867 MHz",null);
+  addBox(mast,"RFD868x",D.radio.l,D.radio.h,D.radio.w,mat(0x24345a,.44,.2),-160,130,30,"RFD868x modem - 57 x 30 x 12.8 mm");
+  track(mast,0,450,0);
+
+  // Arms, propulsion, real prop discs.
+  for(var i=0;i<6;i++){
+    var ang=i*Math.PI/3;
+    var g=new THREE.Group();g.rotation.y=ang;drone.add(g);
+    var armLen=motorR-D.arm.bodyRadius;
+    addCyl(g,"40 mm arm tube",D.arm.tube,armLen,mCarbon,0,70,D.arm.bodyRadius+armLen/2,"Arm tube - 40 mm OD - "+Math.round(armLen)+" mm exposed length","z");
+    addCyl(g,"Hinge",95,65,mMetal,0,70,D.arm.bodyRadius,"Fold hinge / arm clamp - 40 mm tube interface",null);
+    var mg=new THREE.Group();mg.position.set(0,mm(105),mm(motorR));mg.userData.lbl="Motor "+(i+1)+" - X9 G2L - motor dia. 104 mm, fan dia. 130 mm, tube dia. 40 mm";g.add(mg);
+    addCyl(mg,"Motor fan",D.motor.fanDia,D.motor.visualH,mMotor,0,0,0,"X9 G2L fan shroud - dia. 130 mm",null);
+    addCyl(mg,"Motor stator",D.motor.statorDia,D.motor.statorH,mMetal,0,43,0,"X9 G2L stator - 96 x 16 mm",null);
+    addCyl(mg,"Motor shaft",18,45,mMetal,0,87,0,"Prop adapter / shaft - visual",null);
+    var pg=new THREE.Group();pg.position.y=mm(115);pg.userData.spinDir=i%2?1:-1;mg.add(pg);propGroups.push(pg);
+    addBox(pg,"Prop blade A",D.prop.dia,10,62,mat(0x111111,.36,.2,.88),0,0,0,"MFP 36x11 folding prop - full span 914 mm");
+    addBox(pg,"Prop blade B",62,10,D.prop.dia,mat(0x111111,.36,.2,.88),0,0,0,"MFP 36x11 folding prop - cross blade visual");
+    var disc=new THREE.Mesh(new THREE.RingGeometry(mm(D.prop.dia/2-8),mm(D.prop.dia/2),96),new THREE.MeshBasicMaterial({color:clearance < 0 ? 0xff4038 : 0x74d7ff,transparent:true,opacity:clearance < 0 ? .32 : .16,side:THREE.DoubleSide}));
+    disc.rotation.x=-Math.PI/2;disc.userData.lbl="Prop sweep disc - dia. 914 mm; adjacent clearance "+Math.round(clearance)+" mm";pg.add(disc);propDiscs.push(disc);
+    addBox(g,"ESC envelope",120,24,70,mat(0x182350,.45,.15),0,50,D.arm.bodyRadius+armLen*.55,"Integrated ESC / wiring envelope - X9 G2L system");
+  }
+
+  // Landing gear based on published 599 mm open height.
+  var gear=new THREE.Group();gear.userData.lbl="Landing gear - model height matches 599 mm published open height envelope";drone.add(gear);
+  [[-420,-330],[420,-330],[-420,330],[420,330]].forEach(function(p){
+    addCyl(gear,"Landing strut",28,430,mMetal,p[0],-120,p[1],"Landing strut - 430 mm visual","y");
+    addCyl(gear,"Landing foot",78,35,mMetal,p[0],-340,p[1],"Landing foot pad",null);
+  });
+  addBox(gear,"Front skid",900,26,35,mMetal,0,-340,-330,"Front landing skid - 900 mm",null);
+  addBox(gear,"Rear skid",900,26,35,mMetal,0,-340,330,"Rear landing skid - 900 mm",null);
+
+  // Spray system.
+  var spray=new THREE.Group();spray.userData.lbl="Spray system - SHURflo 8000, YF-S402, 4 x XR11002";drone.add(spray);
+  addBox(spray,"Spray boom lateral",D.boom.span,D.boom.tube,D.boom.tube,mMetal,0,-190,0,"Spray boom - 2000 mm span");
+  addBox(spray,"Spray boom fore-aft",D.boom.tube,D.boom.tube,1200,mMetal,0,-190,0,"Fore-aft boom brace - 1200 mm");
+  addBox(spray,"SHURflo 8000 pump",D.pump.l,D.pump.h,D.pump.w,mPump,0,-145,-210,"SHURflo 8000 pump - 12 VDC - up to 1.8 GPM / 6.8 L/min");
+  addBox(spray,"YF-S402",D.flow.l,D.flow.h,D.flow.w,mat(0x0e7c86,.38,.2),180,-145,-210,"YF-S402 flow sensor - 0.5-6 L/min - 4078 pulses/L");
+  [[-760,-420],[760,-420],[-760,420],[760,420]].forEach(function(p,idx){
+    var ng=new THREE.Group();ng.position.set(mm(p[0]),mm(-225),mm(p[1]));ng.userData.lbl="TeeJet XR11002 nozzle "+(idx+1)+" - 0.20 GPM @ 40 PSI - 110 deg";spray.add(ng);
+    addCyl(ng,"Nozzle body",30,42,mNoz,0,0,0,"TeeJet XR11002 body",null);
+    var cone=new THREE.Mesh(new THREE.ConeGeometry(mm(180),mm(520),32,1,true),new THREE.MeshBasicMaterial({color:0x8fd7ff,transparent:true,opacity:.07,side:THREE.DoubleSide}));cone.position.y=mm(-285);cone.rotation.x=Math.PI;ng.add(cone);
+  });
+  track(spray,0,-220,-240);
+
+  // Dimension references.
+  var dims=new THREE.Group();dims.userData.lbl="Dimension guides";scene.add(dims);
+  addLine(dims,-motorR,230,0,motorR,230,0,0xffd166);
+  addLine(dims,-D.prop.dia/2,270,-motorR,D.prop.dia/2,270,-motorR,0xff6b6b);
+
+  raycaster=new THREE.Raycaster();mouse=new THREE.Vector2(-10,-10);labelEl=document.getElementById("lbl");
+  document.addEventListener("mousemove",function(e){mouse.x=e.clientX/innerWidth*2-1;mouse.y=-(e.clientY/innerHeight)*2+1;});
+  document.getElementById("bSpin").onclick=function(){autoSpin=!autoSpin;this.classList.toggle("on",autoSpin);};
+  document.getElementById("bWire").onclick=function(){wireframeOn=!wireframeOn;this.classList.toggle("on",wireframeOn);drone.traverse(function(c){if(c.isMesh&&c.material&&c.material.wireframe!==undefined)c.material.wireframe=wireframeOn;});};
+  document.getElementById("bExplode").onclick=function(){exploded=!exploded;this.classList.toggle("on",exploded);};
+  document.getElementById("bDiscs").onclick=function(){showDiscs=!showDiscs;this.classList.toggle("on",showDiscs);propDiscs.forEach(function(d){d.visible=showDiscs;});};
+  document.getElementById("bReset").onclick=function(){camera.position.set(18,13,24);if(controls){controls.target.set(0,0,0);controls.update();}};
+
+  function animate(){
+    requestAnimationFrame(animate);
+    if(autoSpin)drone.rotation.y+=.0025;
+    propGroups.forEach(function(pg){pg.rotation.y+=pg.userData.spinDir*.18;});
+    if(exploded&&explodeT<1)explodeT=Math.min(1,explodeT+.035);else if(!exploded&&explodeT>0)explodeT=Math.max(0,explodeT-.035);
+    originals.forEach(function(o){o.g.position.copy(o.p).lerp(o.p.clone().add(o.d),explodeT);});
+    raycaster.setFromCamera(mouse,camera);
+    var hits=raycaster.intersectObjects(drone.children,true);var found=false;
+    if(hits.length){var obj=hits[0].object;while(obj&&!obj.userData.lbl)obj=obj.parent;if(obj&&obj.userData.lbl){labelEl.style.display="block";labelEl.style.left=((mouse.x*.5+.5)*innerWidth+14)+"px";labelEl.style.top=((-mouse.y*.5+.5)*innerHeight+14)+"px";labelEl.textContent=obj.userData.lbl;found=true;}}
+    if(!found)labelEl.style.display="none";
+    if(controls)controls.update();renderer.render(scene,camera);
+  }
+  animate();
+  addEventListener("resize",function(){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,270 @@
+{
+  "main": {
+    "id": "913eca1fa600a90e",
+    "type": "split",
+    "children": [
+      {
+        "id": "46747633f690632d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "b9b8e8b703dc5399",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "COEP_HEXACOPTER_MULTI_PATH_ANALYSIS_2026_06_01.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "COEP_HEXACOPTER_MULTI_PATH_ANALYSIS_2026_06_01"
+            }
+          },
+          {
+            "id": "35654d2d22460e00",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "personal -notes - hexacopter component.md",
+                "mode": "preview",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "personal -notes - hexacopter component"
+            }
+          },
+          {
+            "id": "4605ed4f5df0bc60",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "personal note - component priority orders.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "personal note - component priority orders"
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "422ec6caf03a9acb",
+    "type": "split",
+    "children": [
+      {
+        "id": "44edc4cd686079c2",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "051d7ee99c22691d",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "15edb12a6fd5b49e",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "544926b40e2315c3",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 202.5
+  },
+  "right": {
+    "id": "7292735b37e1d7f3",
+    "type": "split",
+    "children": [
+      {
+        "id": "c53520c8c932aa28",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "55648441b7952cff",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "drone_building_guide/00_INDEX.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for 00_INDEX"
+            }
+          },
+          {
+            "id": "cf69d5981b3f6254",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "drone_building_guide/00_INDEX.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from 00_INDEX"
+            }
+          },
+          {
+            "id": "de31aa54d4db2dc6",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "6562d3ccac2176a0",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "c04a07b69bad901e",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "drone_building_guide/00_INDEX.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of 00_INDEX"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "workspaces:Manage workspace layouts": false,
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false,
+      "markdown-importer:Open format converter": false,
+      "obsidian42-brat:BRAT": false,
+      "obsidget:🧩 Widget Gallery": false,
+      "mermaid-tools:Open Mermaid Toolbar": false
+    }
+  },
+  "active": "35654d2d22460e00",
+  "lastOpenFiles": [
+    "package-lock.json",
+    "package.json",
+    "node_modules/modern-web-guidance/skills/modern-web-guidance/skill-version.txt",
+    "node_modules/modern-web-guidance/skills/chrome-extensions/skill-version.txt",
+    "node_modules/modern-web-guidance/policies/modern-web-guidance.toml",
+    "node_modules/modern-web-guidance/policies",
+    "node_modules/modern-web-guidance/skills/modern-web-guidance/search.mjs",
+    "node_modules/modern-web-guidance/skills/modern-web-guidance/modern-web.mjs",
+    "node_modules/modern-web-guidance/skills/modern-web-guidance/guides/webmcp/webmcp.md",
+    "node_modules/modern-web-guidance/skills/modern-web-guidance/guides/user-experience/visually-texture-content.md",
+    "node_modules/modern-web-guidance/skills/modern-web-guidance/guides/user-experience/visually-stable-mixed-fonts.md",
+    "node_modules/modern-web-guidance/skills/modern-web-guidance/guides/user-experience/visually-stable-font-fallbacks.md",
+    "node_modules/modern-web-guidance/skills/modern-web-guidance/guides/forms/validate-input-after-interaction.md",
+    "node_modules/modern-web-guidance/skills/chrome-extensions/references/extensions/tab-management.md",
+    "node_modules/modern-web-guidance/skills/modern-web-guidance/guides/user-experience/swipe-to-remove.md",
+    "node_modules/modern-web-guidance/skills/modern-web-guidance/guides/user-experience/support-global-calendar-systems.md",
+    "node_modules/modern-web-guidance/skills/modern-web-guidance/guides/user-experience/style-parent-with-has.md",
+    "node_modules/modern-web-guidance/skills/chrome-extensions/references/webstore/store-listing.md",
+    "node_modules/modern-web-guidance/skills/chrome-extensions/references/extensions/storage.md",
+    "node_modules/modern-web-guidance/skills/modern-web-guidance/guides/user-experience/stack-drill-down.md",
+    "node_modules/modern-web-guidance/skills/modern-web-guidance/guides/user-experience/stabilize-reactive-state.md",
+    "node_modules/modern-web-guidance/skills/modern-web-guidance/guides/user-experience/soft-edge-content-fade.md",
+    "node_modules/modern-web-guidance/skills/modern-web-guidance/SKILL.md",
+    "node_modules/modern-web-guidance/skills/chrome-extensions/SKILL.md",
+    "node_modules/modern-web-guidance/skills/modern-web-guidance/guides/user-experience/size-aware-styling.md",
+    "node_modules/modern-web-guidance/skills/chrome-extensions/references/extensions/side-panel.md",
+    "node_modules/modern-web-guidance/skills/modern-web-guidance/guides/user-experience/shrinking-header-on-scroll.md",
+    "node_modules/modern-web-guidance/skills/modern-web-guidance/guides/user-experience/shaped-cutouts.md",
+    "node_modules/modern-web-guidance/skills/chrome-extensions/references/extensions/service-worker.md",
+    "node_modules/modern-web-guidance/skills/modern-web-guidance/guides/forms/select-menu-interaction.md",
+    "node_modules/modern-web-guidance/skills/modern-web-guidance/guides/security/security.md",
+    "node_modules/modern-web-guidance/skills/modern-web-guidance/guides/security",
+    "node_modules/modern-web-guidance/skills/modern-web-guidance/guides/user-experience/search-hidden-content.md",
+    "node_modules/modern-web-guidance/skills/modern-web-guidance/guides/user-experience/scrollytelling.md",
+    "node_modules/modern-web-guidance/skills/modern-web-guidance/guides/privacy",
+    "node_modules/modern-web-guidance/skills/modern-web-guidance/guides/passkeys",
+    "full_drone_canva.canvas",
+    "Pasted image 20260531220924.png",
+    "Pasted image 20260529235120.png",
+    "Pasted image 20260529235040.png",
+    "Pasted image 20260529234949.png",
+    "Pasted image 20260529234935.png",
+    "Pasted image 20260529234934.png",
+    "drone-3d-viewer/dist/icons.svg",
+    "drone-3d-viewer/dist/favicon.svg",
+    "Pasted image 20260529172455.png",
+    "drone_building_guide/images/xt60_connector.jpg"
+  ]
+}

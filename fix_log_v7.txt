@@ -1,0 +1,50 @@
+[START] Loaded COEP_Hexacopter_Technical_Report_v6.docx — 272 paragraphs, 44 tables
+[TIME ] 2026-05-29T11:47:43.078448
+
+=== FIX 1: Table 1 (Mission Objectives) — Operating Radius & Spray Rate ===
+  [TABLE 1, Row 7, Col 3] Operating Radius Operational Target: '≥500 m' → '≥10 km telemetry link (RFD868x); ≥500 m operational test target'
+  [TABLE 1, Row 7, Col 4] Operating Radius Operational Achieved: '500 m' → '10 km telemetry link; ~6.8 km practical mission radius'
+  [TABLE 1, Row 7, Col 5] Status updated to note 10-15 km is aspirational
+  [TABLE 1, Row 6, Col 4] Spray Rate Achieved: '15 L/ha' → '15 L/ha @ 3.16 L/min ...'
+  [TABLE 1, Row 9, Col 4] Telemetry Achieved: clarified as 'radio link range'
+
+=== FIX 2: Table 2 (Key Design Decisions) — DD6 '7L' → '6.8L' ===
+  [TABLE 2, Row 6, Col 2] '7L' → '6.8L': 'Research Phase at 36 kg (7L payload) validates all systems at TWR 3.33 and SMF T'
+
+=== FIX 3: Paragraph Text Corrections ===
+  [PARA FIX (Conclusion dual-config reserve)] '75.6% energy reserve versus 52.1%' → '72.6% energy reserve versus 45.4%'
+  [PARA FIX (Conclusion energy reserve)] '52.1% energy reserve' → '45.4% energy reserve'
+  [PARA FIX (Conclusion dual-config reserve)] '75.6% energy reserve versus 52.1%' → '72.6% energy reserve versus 45.4%'
+  [PARA FIX (Key Innovations G3→G1)] 'decision gate at G3' → 'decision gate at G1 Ground Sweep'
+  [PARA FIX (Compliance stmt Drone Rules 2021)] 'DGCA Civil Aviation Requirements for UAS (Draft): Medium cat' → 'Drone Rules 2021 (amended 2024), MoCA/DGCA: Medium category '
+  [PARA FIX (Reference [6] Drone Rules 2021)] '[6] DGCA Civil Aviation Requirements for Unmanned Aircraft S' → '[6] Ministry of Civil Aviation, Drone Rules 2021, G.S.R. 589'
+
+=== FIX 4: Table 11 (Avionics) — Telemetry range clarification ===
+
+=== FIX 5: Table 12 (Spray System) — Filter maintenance & tank fill note ===
+
+=== FIX 6: Table 30 (Pre-Charge) — Single-resistor failure note ===
+  [TABLE 30, Row 3, Col 2] Added single-resistor failure mode note
+
+=== FIX 7: Table 31 (Busbar Thermal) — Peak current / 50°C ambient note ===
+  [TABLE 31, Row 7, Col 3] Added 50°C ambient / peak current caution
+
+=== FIX 8: Table 1 (Mission Objectives) — MTOW row, note 50 kg absent ===
+  [TABLE 1, Row 1 (MTOW), Col 5] Status updated: added 50 kg non-compliance note
+
+=== FIX 9: Table 10 (Propulsion Specs) — Thrust verification note ===
+  [TABLE 10, Row 4, Col 2] Expanded thrust stand caveat
+
+=== FIX 10: Table 26 (Telemetry Link Budget) — Distinguish link range vs mission radius ===
+  [TABLE 26, Row 12, Col 2] Added telemetry vs mission radius distinction
+
+=== FIX 11: Table 12 (Spray) — Pump row: clarify pump vs nozzle flow rates ===
+  [TABLE 12, Row 1, Col 4] Clarified pump vs nozzle-limited flow rates
+
+=== FIX 12: Table 32 (Vibration) — Gate reference check ===
+
+=== FIX 13: Abstract paragraph corrections ===
+  [PARA FIX (Mission endurance 22.7→21.8)] '22.7 minutes of mission endurance' → '21.8 minutes of mission endurance'
+
+[SAVED] Output written to COEP_Hexacopter_Technical_Report_v7.docx
+[DONE ] 2026-05-29T11:47:43.377414

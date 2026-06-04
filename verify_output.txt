@@ -1,0 +1,27 @@
+=== VERIFICATION: v7 Fixes ===
+
+
+PASSED:
+  PASS: Table1 Row7 Col3 - Operating Radius operational target
+  PASS: Table1 Row7 Col5 - Status aspirational note
+  PASS: Table1 Row1 Col5 - MTOW 50kg non-compliance noted
+  PASS: Table1 Row9 Col4 - Telemetry clarified as radio link
+  PASS: Table2 Row6 - DD6 7L→6.8L fixed
+  PASS: Para - Compliance stmt Drone Rules 2021
+  PASS: Para - Reference [6] Drone Rules 2021
+  PASS: Para - G1 Ground Sweep (not G3)
+  PASS: Table31 - Busbar 50°C EXCEEDS note
+  PASS: Table30 - Pre-charge single-resistor FAILURE MODE
+  PASS: Table26 - Telemetry link vs mission radius note
+
+FAILED:
+  FAIL: Table1 Row7 Col4 - Operating Radius operational achieved | found: '10 km telemetry link (RFD868x); practical 45 kg mission radius depends on reserv'
+  FAIL: Table1 Row6 Col4 - Spray rate 3.16 L/min added | found: '15 L/ha target via controlled flow; TeeJet XR11002: ~2.65 L/min at 2.1 bar, ~3.0'
+  FAIL: Para - Conclusion 45.4% energy reserve | found: ''
+  FAIL: Para - Dual config 72.6%/45.4% reserve | found: ''
+  FAIL: Para - Mission endurance 21.8 min | found: ''
+  FAIL: Table10 - Thrust stand MANDATORY note | found: ''
+  FAIL: Table12 - Spray nozzle-limited flow rate | found: ''
+
+Total: 11 passed, 7 failed
+Exit: 1

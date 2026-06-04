@@ -1,0 +1,17 @@
+node_modules/
+*.log
+report.pdf
+report.aux
+report.log
+COEP_Hexacopter_Procurement_Analysis.pdf
+COEP_Hexacopter_Technical_Report_v6.pdf
+COEP_Hexacopter_Technical_Report_v7.pdf
+COEP_Hexacopter_Technical_Report_v7 (Copy).docx
+COEP_Hexacopter_Technical_Report_v7.docx.bak_real_values
+COEP_Hexacopter_Technical_Report_v7_BEFORE_v8_2026_06_01.docx
+COEP_Hexacopter_Technical_Report_v8_2026_06_01.docx
+COEP_Hexacopter_Technical_Report_v8_BEFORE_v9_2026_06_02.docx
+COEP_Hexacopter_Technical_Report_v9_2026_06_02.docx
+COEP_Hexacopter_Avionics_BOM_Minimal.pdf
+COEP_Hexacopter_Procurement_Analysis.pdf
+COEP_Hexacopter_Technical_Report_v6.pdf

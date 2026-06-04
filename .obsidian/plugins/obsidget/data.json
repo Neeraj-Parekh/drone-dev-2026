@@ -1,0 +1,9 @@
+{
+  "galleryPath": ".obsidian/plugins/obsidian-obsidget/gallery",
+  "language": "en",
+  "githubUrl": "https://github.com/infinition/obsidian-obsidget",
+  "maxWidthValue": 100,
+  "maxWidthUnit": "percent",
+  "firstRun": false,
+  "showDataFiles": true
+}
