@@ -297,10 +297,10 @@
                 x-text="'₹' + (activePreset?.total_cost || 0).toLocaleString('en-IN')"></span>
               <span class="mx-1 opacity-50">·</span>
               Physics estimate: <span class="font-mono" x-text="physicsResult?.costFormatted || '—'"></span>
-              <template x-if="activePreset?.total_cost && physicsResult?.totalCost">
+              <template x-if="activePreset?.total_cost && physicsResult?.totalCost_INR">
                 <span
-                  :class="Math.abs(activePreset.total_cost - physicsResult.totalCost) < (activePreset.id.startsWith('reconciled_') ? 60000 : 12000) ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'"
-                  x-text="Math.abs(activePreset.total_cost - physicsResult.totalCost) < (activePreset.id.startsWith('reconciled_') ? 60000 : 12000) ? '✓ Close match' : '⚠ Gap: ₹' + Math.abs(activePreset.total_cost - physicsResult.totalCost).toLocaleString('en-IN') + ' (extras not in wizard dropdowns)'"></span>
+                  :class="Math.abs(activePreset.total_cost - physicsResult.totalCost_INR) < (activePreset.id.startsWith('reconciled_') ? 60000 : 12000) ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'"
+                  x-text="Math.abs(activePreset.total_cost - physicsResult.totalCost_INR) < (activePreset.id.startsWith('reconciled_') ? 60000 : 12000) ? '✓ Close match' : '⚠ Gap: ₹' + Math.abs(activePreset.total_cost - physicsResult.totalCost_INR).toLocaleString('en-IN') + ' (extras not in wizard dropdowns)'"></span>
               </template>
             </div>
           </div>
@@ -358,7 +358,7 @@
                     <span class="block mb-1" x-show="getComp(buildConfig.frame).editorial?.the_catch"><span class="font-semibold text-amber-600 dark:text-amber-400">Cons:</span> <span x-text="getComp(buildConfig.frame).editorial.the_catch"></span></span>
                     <span class="block mb-1" x-show="getComp(buildConfig.frame).editorial?.best_for"><span class="font-semibold text-violet-600 dark:text-violet-400">Best for:</span> <span x-text="getComp(buildConfig.frame).editorial.best_for"></span></span>
                     <span class="block mb-1" x-show="getComp(buildConfig.frame).notes"><span class="font-semibold text-slate-600 dark:text-slate-400">Notes:</span> <span x-text="getComp(buildConfig.frame).notes"></span></span>
-                    <span class="block text-red-650 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.frame).compatibility?.warnings?.length">
+                    <span class="block text-red-600 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.frame).compatibility?.warnings?.length">
                       ⚠️ Warnings: <span x-text="getComp(buildConfig.frame).compatibility.warnings.join(' | ')"></span>
                     </span>
                   </div>
@@ -372,7 +372,7 @@
                     <span class="block mb-1" x-show="getComp(buildConfig.tank).editorial?.the_catch"><span class="font-semibold text-amber-600 dark:text-amber-400">Cons:</span> <span x-text="getComp(buildConfig.tank).editorial.the_catch"></span></span>
                     <span class="block mb-1" x-show="getComp(buildConfig.tank).editorial?.best_for"><span class="font-semibold text-violet-600 dark:text-violet-400">Best for:</span> <span x-text="getComp(buildConfig.tank).editorial.best_for"></span></span>
                     <span class="block mb-1" x-show="getComp(buildConfig.tank).notes"><span class="font-semibold text-slate-600 dark:text-slate-400">Notes:</span> <span x-text="getComp(buildConfig.tank).notes"></span></span>
-                    <span class="block text-red-650 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.tank).compatibility?.warnings?.length">
+                    <span class="block text-red-600 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.tank).compatibility?.warnings?.length">
                       ⚠️ Warnings: <span x-text="getComp(buildConfig.tank).compatibility.warnings.join(' | ')"></span>
                     </span>
                   </div>
@@ -418,7 +418,7 @@
                   <span class="block mb-1" x-show="getComp(buildConfig.motor).editorial?.the_catch"><span class="font-semibold text-amber-600 dark:text-amber-400">Cons:</span> <span x-text="getComp(buildConfig.motor).editorial.the_catch"></span></span>
                   <span class="block mb-1" x-show="getComp(buildConfig.motor).editorial?.best_for"><span class="font-semibold text-violet-600 dark:text-violet-400">Best for:</span> <span x-text="getComp(buildConfig.motor).editorial.best_for"></span></span>
                   <span class="block mb-1" x-show="getComp(buildConfig.motor).notes"><span class="font-semibold text-slate-600 dark:text-slate-400">Notes:</span> <span x-text="getComp(buildConfig.motor).notes"></span></span>
-                  <span class="block text-red-650 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.motor).compatibility?.warnings?.length">
+                  <span class="block text-red-600 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.motor).compatibility?.warnings?.length">
                     ⚠️ Warnings: <span x-text="getComp(buildConfig.motor).compatibility.warnings.join(' | ')"></span>
                   </span>
                 </div>
@@ -474,7 +474,7 @@
                     <span class="block mb-1" x-show="getComp(buildConfig.battery).editorial?.the_catch"><span class="font-semibold text-amber-600 dark:text-amber-400">Cons:</span> <span x-text="getComp(buildConfig.battery).editorial.the_catch"></span></span>
                     <span class="block mb-1" x-show="getComp(buildConfig.battery).editorial?.best_for"><span class="font-semibold text-violet-600 dark:text-violet-400">Best for:</span> <span x-text="getComp(buildConfig.battery).editorial.best_for"></span></span>
                     <span class="block mb-1" x-show="getComp(buildConfig.battery).notes"><span class="font-semibold text-slate-600 dark:text-slate-400">Notes:</span> <span x-text="getComp(buildConfig.battery).notes"></span></span>
-                    <span class="block text-red-650 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.battery).compatibility?.warnings?.length">
+                    <span class="block text-red-600 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.battery).compatibility?.warnings?.length">
                       ⚠️ Warnings: <span x-text="getComp(buildConfig.battery).compatibility.warnings.join(' | ')"></span>
                     </span>
                   </div>
@@ -487,7 +487,7 @@
                     <span class="block mb-1" x-show="getComp(getResolvedChargerId()).editorial?.why_it_fits"><span class="font-semibold text-blue-600 dark:text-blue-400">Pros:</span> <span x-text="getComp(getResolvedChargerId()).editorial.why_it_fits"></span></span>
                     <span class="block mb-1" x-show="getComp(getResolvedChargerId()).editorial?.the_catch"><span class="font-semibold text-amber-600 dark:text-amber-400">Cons:</span> <span x-text="getComp(getResolvedChargerId()).editorial.the_catch"></span></span>
                     <span class="block mb-1" x-show="getComp(getResolvedChargerId()).notes"><span class="font-semibold text-slate-600 dark:text-slate-400">Notes:</span> <span x-text="getComp(getResolvedChargerId()).notes"></span></span>
-                    <span class="block text-red-650 dark:text-red-400 font-semibold" x-show="getComp(getResolvedChargerId()).compatibility?.warnings?.length">
+                    <span class="block text-red-600 dark:text-red-400 font-semibold" x-show="getComp(getResolvedChargerId()).compatibility?.warnings?.length">
                       ⚠️ Warnings: <span x-text="getComp(getResolvedChargerId()).compatibility.warnings.join(' | ')"></span>
                     </span>
                   </div>
@@ -501,7 +501,7 @@
                     <span class="block mb-1" x-show="getComp(buildConfig.pump).editorial?.the_catch"><span class="font-semibold text-amber-600 dark:text-amber-400">Cons:</span> <span x-text="getComp(buildConfig.pump).editorial.the_catch"></span></span>
                     <span class="block mb-1" x-show="getComp(buildConfig.pump).editorial?.best_for"><span class="font-semibold text-violet-600 dark:text-violet-400">Best for:</span> <span x-text="getComp(buildConfig.pump).editorial.best_for"></span></span>
                     <span class="block mb-1" x-show="getComp(buildConfig.pump).notes"><span class="font-semibold text-slate-600 dark:text-slate-400">Notes:</span> <span x-text="getComp(buildConfig.pump).notes"></span></span>
-                    <span class="block text-red-650 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.pump).compatibility?.warnings?.length">
+                    <span class="block text-red-600 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.pump).compatibility?.warnings?.length">
                       ⚠️ Warnings: <span x-text="getComp(buildConfig.pump).compatibility.warnings.join(' | ')"></span>
                     </span>
                   </div>
@@ -556,7 +556,7 @@
                     <span class="block mb-1" x-show="getComp(buildConfig.fc).editorial?.the_catch"><span class="font-semibold text-amber-600 dark:text-amber-400">Cons:</span> <span x-text="getComp(buildConfig.fc).editorial.the_catch"></span></span>
                     <span class="block mb-1" x-show="getComp(buildConfig.fc).editorial?.best_for"><span class="font-semibold text-violet-600 dark:text-violet-400">Best for:</span> <span x-text="getComp(buildConfig.fc).editorial.best_for"></span></span>
                     <span class="block mb-1" x-show="getComp(buildConfig.fc).notes"><span class="font-semibold text-slate-650 dark:text-slate-400 font-medium">Notes:</span> <span x-text="getComp(buildConfig.fc).notes"></span></span>
-                    <span class="block text-red-650 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.fc).compatibility?.warnings?.length">
+                    <span class="block text-red-600 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.fc).compatibility?.warnings?.length">
                       ⚠️ Warnings: <span x-text="getComp(buildConfig.fc).compatibility.warnings.join(' | ')"></span>
                     </span>
                   </div>
@@ -570,7 +570,7 @@
                     <span class="block mb-1" x-show="getComp(buildConfig.gps).editorial?.the_catch"><span class="font-semibold text-amber-600 dark:text-amber-400">Cons:</span> <span x-text="getComp(buildConfig.gps).editorial.the_catch"></span></span>
                     <span class="block mb-1" x-show="getComp(buildConfig.gps).editorial?.best_for"><span class="font-semibold text-violet-600 dark:text-violet-400">Best for:</span> <span x-text="getComp(buildConfig.gps).editorial.best_for"></span></span>
                     <span class="block mb-1" x-show="getComp(buildConfig.gps).notes"><span class="font-semibold text-slate-650 dark:text-slate-400 font-medium">Notes:</span> <span x-text="getComp(buildConfig.gps).notes"></span></span>
-                    <span class="block text-red-650 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.gps).compatibility?.warnings?.length">
+                    <span class="block text-red-600 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.gps).compatibility?.warnings?.length">
                       ⚠️ Warnings: <span x-text="getComp(buildConfig.gps).compatibility.warnings.join(' | ')"></span>
                     </span>
                   </div>
@@ -584,7 +584,7 @@
                     <span class="block mb-1" x-show="getComp(buildConfig.pdb).editorial?.the_catch"><span class="font-semibold text-amber-600 dark:text-amber-400">Cons:</span> <span x-text="getComp(buildConfig.pdb).editorial.the_catch"></span></span>
                     <span class="block mb-1" x-show="getComp(buildConfig.pdb).editorial?.best_for"><span class="font-semibold text-violet-600 dark:text-violet-400">Best for:</span> <span x-text="getComp(buildConfig.pdb).editorial.best_for"></span></span>
                     <span class="block mb-1" x-show="getComp(buildConfig.pdb).notes"><span class="font-semibold text-slate-650 dark:text-slate-400 font-medium">Notes:</span> <span x-text="getComp(buildConfig.pdb).notes"></span></span>
-                    <span class="block text-red-650 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.pdb).compatibility?.warnings?.length">
+                    <span class="block text-red-600 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.pdb).compatibility?.warnings?.length">
                       ⚠️ Warnings: <span x-text="getComp(buildConfig.pdb).compatibility.warnings.join(' | ')"></span>
                     </span>
                   </div>
@@ -633,7 +633,7 @@
                     <span class="block mb-1" x-show="getComp(buildConfig.camera).editorial?.the_catch"><span class="font-semibold text-amber-600 dark:text-amber-400">Cons:</span> <span x-text="getComp(buildConfig.camera).editorial.the_catch"></span></span>
                     <span class="block mb-1" x-show="getComp(buildConfig.camera).editorial?.best_for"><span class="font-semibold text-violet-600 dark:text-violet-400">Best for:</span> <span x-text="getComp(buildConfig.camera).editorial.best_for"></span></span>
                     <span class="block mb-1" x-show="getComp(buildConfig.camera).notes"><span class="font-semibold text-slate-650 dark:text-slate-400 font-medium">Notes:</span> <span x-text="getComp(buildConfig.camera).notes"></span></span>
-                    <span class="block text-red-650 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.camera).compatibility?.warnings?.length">
+                    <span class="block text-red-600 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.camera).compatibility?.warnings?.length">
                       ⚠️ Warnings: <span x-text="getComp(buildConfig.camera).compatibility.warnings.join(' | ')"></span>
                     </span>
                   </div>
@@ -647,7 +647,7 @@
                     <span class="block mb-1" x-show="getComp(buildConfig.sensor).editorial?.the_catch"><span class="font-semibold text-amber-600 dark:text-amber-400">Cons:</span> <span x-text="getComp(buildConfig.sensor).editorial.the_catch"></span></span>
                     <span class="block mb-1" x-show="getComp(buildConfig.sensor).editorial?.best_for"><span class="font-semibold text-violet-600 dark:text-violet-400">Best for:</span> <span x-text="getComp(buildConfig.sensor).editorial.best_for"></span></span>
                     <span class="block mb-1" x-show="getComp(buildConfig.sensor).notes"><span class="font-semibold text-slate-650 dark:text-slate-400 font-medium">Notes:</span> <span x-text="getComp(buildConfig.sensor).notes"></span></span>
-                    <span class="block text-red-650 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.sensor).compatibility?.warnings?.length">
+                    <span class="block text-red-600 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.sensor).compatibility?.warnings?.length">
                       ⚠️ Warnings: <span x-text="getComp(buildConfig.sensor).compatibility.warnings.join(' | ')"></span>
                     </span>
                   </div>
@@ -862,16 +862,7 @@
           </div>
         </div>
 
-        <!-- Compatibility Status (Legacy) -->
-        <div
-          class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm p-6 flex flex-col justify-between">
-          <div>
-            <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4">Compatibility Status (Legacy)</h2>
-            <div id="compatibility" class="space-y-2 text-sm">
-              <p class="text-slate-500 dark:text-slate-400">Select components to check compatibility.</p>
-            </div>
-          </div>
-        </div>
+
       </div>
 
       <!-- Charts Section -->
@@ -3244,8 +3235,7 @@ Now generate for: </textarea>
     <!-- Footer -->
     <div class="mt-8 text-center text-slate-500 dark:text-slate-400 text-sm no-print">
       <p>COEP Hexacopter Build Wizard v2.0 — Physics validated against v4 report (2026-06-03)</p>
-      <p>Component database: <span x-text="allComponents.length"></span> components | Compatibility rules: 7 hard + 4
-        warning</p>
+      <p>Component database: <span x-text="allComponents.length"></span> components | Compatibility rules: 11 hard errors (R1–R15) + 7 warnings (W1–W7)</p>
     </div>
   </div>
 
