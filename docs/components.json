@@ -572,7 +572,7 @@
       "category": "Propulsion",
       "necessity": "Non-Negotiable",
       "price_inr": 3768,
-      "weight_g": 150,
+      "weight_g": 230,
       "stock_status": "in_stock",
       "lead_time_days": 5,
       "retailers": [
@@ -3729,7 +3729,7 @@
       "category": "Avionics & Control",
       "necessity": "Mission-Critical",
       "price_inr": 23000,
-      "weight_g": 100,
+      "weight_g": 110,
       "stock_status": "import",
       "lead_time_days": 30,
       "retailers": [
@@ -5363,7 +5363,7 @@
       "category": "Mission Payload",
       "necessity": "Mission-Critical",
       "price_inr": 8500,
-      "weight_g": 450,
+      "weight_g": 690,
       "stock_status": "in_stock",
       "lead_time_days": 3,
       "retailers": [

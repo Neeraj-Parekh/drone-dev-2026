@@ -228,7 +228,7 @@ const PhysicsEngine = {
       // Determine correct RC receiver: prefer ELRS if config specifies it, otherwise fall back to FrSky
       const rcReceiverId = (config.rc_rx === 'elrs' || config.rx === 'betafpv_elrs_lite_rx' || config.rc_rx === 'betafpv_elrs_lite_rx')
         ? 'betafpv_elrs_lite_rx'
-        : 'frsky_rxsr';
+        : (config.rc_rx === 'skydroid_t12' ? 'skydroid_t12' : 'frsky_rxsr');
 
       const requiredFlyingAccessoryIds = [
         'mauch_hs200_lv',      // current sensor
@@ -323,26 +323,50 @@ const PhysicsEngine = {
       // Determine correct RC receiver: prefer ELRS if config specifies it, otherwise fall back to FrSky
       const rcReceiverId = (config.rc_rx === 'elrs' || config.rx === 'betafpv_elrs_lite_rx' || config.rc_rx === 'betafpv_elrs_lite_rx')
         ? 'betafpv_elrs_lite_rx'
-        : 'frsky_rxsr';
+        : (config.rc_rx === 'skydroid_t12' ? 'skydroid_t12' : 'frsky_rxsr');
+
+      let chargerId = 'skyrc_pc1260';
+      if (battery) {
+        let batteryS = 0;
+        if (battery.compatibility?.cells) {
+          const match = String(battery.compatibility.cells).match(/(\d+)S/i);
+          if (match) batteryS = parseInt(match[1]);
+        }
+        if (!batteryS && battery.specs?.configuration) {
+          const match = String(battery.specs.configuration).match(/(\d+)S/i);
+          if (match) batteryS = parseInt(match[1]);
+        }
+        if (!batteryS) {
+          batteryS = Math.round((battery.specs?.nominal_voltage_V || battery.specs?.voltage_V || 44.4) / 3.7);
+        }
+        if (batteryS === 14) {
+          chargerId = 'ultrapower_up2800_14s';
+        } else if (batteryS <= 6) {
+          chargerId = 'hobbymate_h6ac_charger';
+        }
+      }
 
       const requiredAccessoryIds = [
         'mauch_hs200_lv',       // current sensor
-        'matek_12v_bec',        // BEC (replaced by holybro_10a_bec in research builds, but cost is similar)
+        'matek_12v_bec',        // BEC
         rcReceiverId,           // RC receiver (ELRS or FrSky)
-        'radiomaster_tx16s_mkii', // RC transmitter — always required, not in component selects
         'g10_vibration_pads',   // vibration pads
         '6awg_wire_harness',    // wire harness
         '100a_anl_fuse',        // fuse
         'gps_mast_20cm',        // gps mast
         'battery_strap',        // battery strap
         'teejet_xr11002',       // spray nozzles
-        'skyrc_pc1260',         // dual-channel 12S charger
+        chargerId,              // dynamic charger based on battery voltage (PC1260/UP2800/H6AC)
         'tool_kit',             // maintenance tool kit
         'smoke_stopper',        // safety smoke stopper
         'prop_balancer',        // propeller balancer
         'calibration_scale',    // calibration scale
         'lipo_safe_bag'         // lipo safe bag
       ];
+
+      if (config.rc_rx !== 'skydroid_t12') {
+        requiredAccessoryIds.push('radiomaster_tx16s_mkii');
+      }
 
       requiredAccessoryIds.forEach(id => {
         if (!selectedIds.has(id)) {
@@ -391,8 +415,35 @@ const PhysicsEngine = {
     const frame = getComp(config.frame);
     const pdb = getComp(config.pdb);
     const pump = getComp(config.pump);
-    const charger = getComp(config.charger);
     const powerModule = getComp(config.powerModule);
+
+    // Pre-calculate battery cells
+    let batteryS = 0;
+    if (battery) {
+      if (battery.compatibility?.cells) {
+        const match = String(battery.compatibility.cells).match(/(\d+)S/i);
+        if (match) batteryS = parseInt(match[1]);
+      }
+      if (!batteryS && battery.specs?.configuration) {
+        const match = String(battery.specs.configuration).match(/(\d+)S/i);
+        if (match) batteryS = parseInt(match[1]);
+      }
+      if (!batteryS) {
+        batteryS = Math.round((battery.specs?.nominal_voltage_V || battery.specs?.voltage_V || 44.4) / 3.7);
+      }
+    }
+
+    // Resolve charger dynamically if not explicitly selected
+    let charger = getComp(config.charger);
+    if (!charger && battery) {
+      let chargerId = 'skyrc_pc1260';
+      if (batteryS === 14) {
+        chargerId = 'ultrapower_up2800_14s';
+      } else if (batteryS <= 6) {
+        chargerId = 'hobbymate_h6ac_charger';
+      }
+      charger = getComp(chargerId);
+    }
 
     let tank = getComp(config.tank);
     if (!tank && components.length > 0) {
@@ -426,19 +477,6 @@ const PhysicsEngine = {
 
     // R2: Battery voltage vs charger
     if (battery && charger) {
-      let batteryS = 0;
-      if (battery.compatibility?.cells) {
-        const match = String(battery.compatibility.cells).match(/(\d+)S/i);
-        if (match) batteryS = parseInt(match[1]);
-      }
-      if (!batteryS && battery.specs?.configuration) {
-        const match = String(battery.specs.configuration).match(/(\d+)S/i);
-        if (match) batteryS = parseInt(match[1]);
-      }
-      if (!batteryS) {
-        batteryS = Math.round((battery.specs?.nominal_voltage_V || battery.specs?.voltage_V || 44.4) / 3.7);
-      }
-
       let chargerMaxS = 0;
       if (charger.specs?.max_cells) {
         chargerMaxS = parseInt(charger.specs.max_cells);
@@ -453,10 +491,10 @@ const PhysicsEngine = {
       if (chargerMaxS > 0 && batteryS > chargerMaxS) {
         issues.push({
           rule: "R2", severity: "error", icon: "🔴",
-          title: "CHARGER CANNOT CHARGE THIS BATTERY",
-          message: `${battery.name} is ${batteryS}S. ${charger.name} only charges up to ${chargerMaxS}S.`,
+          title: "CRITICAL CHARGING FIRE RISK",
+          message: `${battery.name} is ${batteryS}S. ${charger.name} only charges up to ${chargerMaxS}S. Attempting to charge a ${batteryS}S battery with a ${chargerMaxS}S charger is an extreme fire hazard.`,
           component: charger.name,
-          fix: `Use a charger that supports ${batteryS}S batteries`
+          fix: `Upgrade to a compatible charger (e.g. SkyRC PC1260 for 12S, UltraPower UP2800 for 14S)`
         });
       }
     }
@@ -726,15 +764,84 @@ const PhysicsEngine = {
       });
     }
 
-    // W8: Heavy camera affecting flight time
-    if (config.cameraWeight_g && config.cameraWeight_g > 200) {
-      issues.push({
-        rule: "W8", severity: "info", icon: "ℹ️",
-        title: "HEAVY CAMERA PAYLOAD",
-        message: `Camera weighs ${config.cameraWeight_g}g. This adds to MTOW and reduces flight time.`,
-        component: "Camera",
-        fix: "Consider lighter camera or account for reduced flight time"
-      });
+    // R11: PDB outputs vs motor count
+    if (pdb) {
+      const motorCount = config.motorCount || 6;
+      const escOutputs = pdb.specs?.esc_outputs || 6;
+      if (motorCount > escOutputs) {
+        issues.push({
+          rule: "R11", severity: "error", icon: "🔴",
+          title: "INSUFFICIENT PDB OUTPUTS",
+          message: `${pdb.name} only has ${escOutputs} ESC outputs, but you selected an ${motorCount}-motor configuration. Physically routing ${motorCount} ESCs would require unsafe wire splicing.`,
+          component: pdb.name,
+          fix: "Use a PDB with more ESC outputs (e.g. Matek HV PDB with 8 outputs) or reduce motor count."
+        });
+      }
+    }
+
+    // R12: Motor size vs Frame mount clamps (mismatch on Tarot T960 frame with large motors)
+    if (frame && motor) {
+      if (frame.id === "tarot_t960_frame" && motor.id === "sunnysky_x4112s_motor") {
+        issues.push({
+          rule: "R12", severity: "error", icon: "🔴",
+          title: "MOTOR MOUNT MISMATCH",
+          message: "SunnySky X4112S motors (46mm OD) cannot be mounted directly to Tarot T960 arms (22mm tubes) without custom-machined adapter plates, introducing safety and vibration risks.",
+          component: motor.name,
+          fix: "Change frame to EFT E610P (35mm native arm clamps) or use compatible smaller motors."
+        });
+      }
+    }
+
+    // R13: Battery voltage over-limit (14S battery on 12S ESCs or 12S PDB)
+    if (battery) {
+      if (batteryS === 14) {
+        if (motor && (motor.id.includes('x8') || motor.id.includes('sunnysky'))) {
+          issues.push({
+            rule: "R13", severity: "error", icon: "🔴",
+            title: "VOLTAGE OVER-LIMIT (ESC)",
+            message: `Selected battery ${battery.name} is 14S. Motor ESCs (${motor.name}) only support up to 12S voltage. Overvoltage will damage/destroy the ESCs.`,
+            component: motor.name,
+            fix: "Use 14S-rated propulsion combo (like Hobbywing X9 G2L) or use a 12S battery."
+          });
+        }
+        if (pdb && pdb.id === 'tarot_tl2996_pdb') {
+          issues.push({
+            rule: "R13", severity: "error", icon: "🔴",
+            title: "VOLTAGE OVER-LIMIT (PDB)",
+            message: `Selected battery ${battery.name} is 14S. Tarot TL2996 PDB is only rated for 12S max (50.4V). Using 14S exceeds trace and capacitor voltage ratings, risking electrical fire.`,
+            component: pdb.name,
+            fix: "Use a 14S-rated PDB (like Matek HV PDB / FCHUB-12S) or use a 12S battery."
+          });
+        }
+      }
+    }
+
+    // R14: Battery voltage under-limit (6S battery on 12S/14S ESCs)
+    if (battery && batteryS < 12) {
+      if (motor && (motor.id.includes('x8') || motor.id.includes('x9'))) {
+        issues.push({
+          rule: "R14", severity: "error", icon: "🔴",
+          title: "UNDER-VOLTAGE MISMATCH (ESC)",
+          message: `Selected battery ${battery.name} is ${batteryS}S. Motor ESCs (${motor.name}) require at least 12S nominal voltage to arm and spin.`,
+          component: motor.name,
+          fix: "Use a 12S or 14S battery compatible with the selected motor system."
+        });
+      }
+    }
+
+    // R15: Connector compatibility (Tattu batteries use AS150U-F, Hobbywing ESCs use XT150. AS150U-F to XT150 adapter required)
+    if (battery && motor) {
+      const batteryName = battery.name.toLowerCase();
+      const motorName = motor.name.toLowerCase();
+      if (batteryName.includes("tattu") && motorName.includes("x8")) {
+        issues.push({
+          rule: "R15", severity: "info", icon: "ℹ️",
+          title: "CONNECTOR ADAPTER REQUIRED",
+          message: "Tattu batteries use AS150U-F connectors while Hobbywing X8 ESCs use XT150. An AS150U-F to XT150 adapter is required for electrical hookup.",
+          component: battery.name,
+          fix: "Ensure '6AWG wire harness with AS150 to XT150 adapters' accessory is included in your bill of materials (automatically added)."
+        });
+      }
     }
 
     return issues;
