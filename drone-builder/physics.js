@@ -222,7 +222,6 @@ const PhysicsEngine = {
       const selectedIds = new Set([
         config.frame, config.motor, config.battery, config.fc, config.gps,
         config.pdb || 'tarot_tl2996_pdb', config.pump, tank?.id, config.camera, config.sensor,
-        config.rc_rx,
         ...(config.extras || [])
       ].filter(Boolean));
 
@@ -318,7 +317,6 @@ const PhysicsEngine = {
       const selectedIds = new Set([
         config.frame, config.motor, config.battery, config.fc, config.gps,
         config.pdb || 'tarot_tl2996_pdb', config.pump, tank?.id, config.camera, config.sensor,
-        config.rc_rx,
         ...(config.extras || [])
       ].filter(Boolean));
 

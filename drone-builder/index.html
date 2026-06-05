@@ -514,7 +514,7 @@
           <div
             class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm p-6">
             <h2 class="text-lg font-semibold text-slate-900 dark:text-white mb-4">4. Avionics & Power Distribution</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Flight
                   Controller</label>
@@ -543,11 +543,20 @@
                   </template>
                 </select>
               </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">RC Receiver</label>
+                <select x-model="buildConfig.rc_rx" @change="recalculate()"
+                  class="w-full border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                  <template x-for="c in allComponents.filter(c => ['frsky_rxsr', 'betafpv_elrs_lite_rx', 'skydroid_t12'].includes(c.id))" :key="c.id">
+                    <option :value="c.id" x-text="c.name + ' (₹' + c.price_inr.toLocaleString('en-IN') + ')'"></option>
+                  </template>
+                </select>
+              </div>
             </div>
 
             <!-- Component Info Cards -->
-            <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/60 grid grid-cols-1 md:grid-cols-3 gap-3 text-[11px] text-slate-500 dark:text-slate-400"
-                 x-show="buildConfig.fc || buildConfig.gps || buildConfig.pdb">
+            <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/60 grid grid-cols-1 md:grid-cols-4 gap-3 text-[11px] text-slate-500 dark:text-slate-400"
+                 x-show="buildConfig.fc || buildConfig.gps || buildConfig.pdb || buildConfig.rc_rx">
               <template x-if="getComp(buildConfig.fc)">
                 <div class="bg-slate-50/50 dark:bg-slate-900/30 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800 flex flex-col justify-between">
                   <div>
@@ -586,6 +595,20 @@
                     <span class="block mb-1" x-show="getComp(buildConfig.pdb).notes"><span class="font-semibold text-slate-650 dark:text-slate-400 font-medium">Notes:</span> <span x-text="getComp(buildConfig.pdb).notes"></span></span>
                     <span class="block text-red-600 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.pdb).compatibility?.warnings?.length">
                       ⚠️ Warnings: <span x-text="getComp(buildConfig.pdb).compatibility.warnings.join(' | ')"></span>
+                    </span>
+                  </div>
+                </div>
+              </template>
+              <template x-if="getComp(buildConfig.rc_rx)">
+                <div class="bg-slate-50/50 dark:bg-slate-900/30 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800 flex flex-col justify-between">
+                  <div>
+                    <span class="font-bold text-slate-700 dark:text-slate-300 text-xs block mb-1">📡 RC Receiver: <span x-text="getComp(buildConfig.rc_rx).name"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.rc_rx).editorial?.why_it_fits"><span class="font-semibold text-blue-600 dark:text-blue-400">Pros:</span> <span x-text="getComp(buildConfig.rc_rx).editorial.why_it_fits"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.rc_rx).editorial?.the_catch"><span class="font-semibold text-amber-600 dark:text-amber-400">Cons:</span> <span x-text="getComp(buildConfig.rc_rx).editorial.the_catch"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.rc_rx).editorial?.best_for"><span class="font-semibold text-violet-600 dark:text-violet-400">Best for:</span> <span x-text="getComp(buildConfig.rc_rx).editorial.best_for"></span></span>
+                    <span class="block mb-1" x-show="getComp(buildConfig.rc_rx).notes"><span class="font-semibold text-slate-650 dark:text-slate-400 font-medium">Notes:</span> <span x-text="getComp(buildConfig.rc_rx).notes"></span></span>
+                    <span class="block text-red-600 dark:text-red-400 font-semibold" x-show="getComp(buildConfig.rc_rx).compatibility?.warnings?.length">
+                      ⚠️ Warnings: <span x-text="getComp(buildConfig.rc_rx).compatibility.warnings.join(' | ')"></span>
                     </span>
                   </div>
                 </div>
@@ -1997,16 +2020,23 @@ Now generate for: </textarea>
                     <span class="font-semibold text-sm text-slate-900 dark:text-white leading-tight break-words"
                       x-text="preset.name"></span>
                   </div>
-                  <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold shrink-0 mt-0.5" :class="{
-                      'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300': preset.status === 'SELECTED' || preset.status === 'RECOMMENDED',
-                      'bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300': preset.status === 'Combinations',
-                      'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300': preset.status === 'RESEARCH',
-                      'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300': preset.status === 'PREMIUM',
-                      'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300': preset.status === 'PROTO',
-                      'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300': preset.status === 'EXCEEDS FRAME' || preset.status === 'NOT HEXA',
-                      'bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300': preset.status === 'SHORT FLIGHT'
-                    }" x-text="preset.status">
-                  </span>
+                  <div class="flex items-center gap-1 shrink-0 mt-0.5">
+                    <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold shrink-0" :class="{
+                        'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300': preset.status === 'SELECTED' || preset.status === 'RECOMMENDED',
+                        'bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300': preset.status === 'Combinations',
+                        'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300': preset.status === 'RESEARCH',
+                        'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300': preset.status === 'PREMIUM',
+                        'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300': preset.status === 'PROTO',
+                        'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300': preset.status === 'EXCEEDS FRAME' || preset.status === 'NOT HEXA',
+                        'bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300': preset.status === 'SHORT FLIGHT',
+                        'bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300': preset.status === 'CUSTOM'
+                      }" x-text="preset.status">
+                    </span>
+                    <button x-show="preset.status === 'CUSTOM'" @click.stop="deleteCustomPreset(preset.id)"
+                            class="text-slate-400 hover:text-red-500 dark:text-slate-500 dark:hover:text-red-400 text-xs px-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded transition-all font-bold" title="Delete custom preset">
+                      ✕
+                    </button>
+                  </div>
                 </div>
                 <!-- Stats strip -->
                 <div class="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[11px] text-slate-600 dark:text-slate-400 mb-2">
@@ -3359,7 +3389,8 @@ Now generate for: </textarea>
           tankCapacity_L: 10,
           camera: '',
           sensor: '',
-          extras: []
+          extras: [],
+          rc_rx: 'frsky_rxsr'
         },
 
         // Editor state
@@ -4073,7 +4104,6 @@ Now generate for: </textarea>
           const selectedIds = new Set([
             config.frame, config.motor, config.battery, config.fc, config.gps,
             config.pdb || 'tarot_tl2996_pdb', config.pump, tank?.id, config.camera, config.sensor,
-            config.rc_rx,
             ...(config.extras || [])
           ].filter(Boolean));
 
@@ -4563,8 +4593,54 @@ Now generate for: </textarea>
             result: result
           });
           this.saveConfigsToStorage();
+
+          // Push into custom presets so it displays in presets grid
+          try {
+            const customPresets = this.safeJSONParse('drone_custom_presets', []);
+            const newId = 'custom_' + Date.now();
+            const bom = this.generatePresetBOM(this.buildConfig);
+            const totalCost = result?.totalCost_INR || Object.values(bom).reduce((a, b) => a + b, 0);
+
+            const newPreset = {
+              id: newId,
+              name: name,
+              description: 'User-saved custom build',
+              status: 'CUSTOM',
+              config: { ...this.buildConfig },
+              bom: bom,
+              total_cost: totalCost,
+              v4_verified: false,
+              notes: 'Custom preset created on ' + new Date().toLocaleDateString(),
+              pros: [],
+              cons: [],
+              Combinations_notes: []
+            };
+            customPresets.push(newPreset);
+            localStorage.setItem('drone_custom_presets', JSON.stringify(customPresets));
+            this.loadPresets();
+          } catch (e) {
+            console.error('Error saving custom preset:', e);
+          }
+
           this.customPresetName = '';
-          this.showNotification('Saved "' + name + '" to Comparison tab.');
+          this.showNotification('Saved "' + name + '" to Comparison and Presets.');
+        },
+
+        deleteCustomPreset(id) {
+          if (confirm("Are you sure you want to delete this custom preset?")) {
+            try {
+              const customPresets = this.safeJSONParse('drone_custom_presets', []);
+              const filtered = customPresets.filter(p => p.id !== id);
+              localStorage.setItem('drone_custom_presets', JSON.stringify(filtered));
+              this.loadPresets();
+              if (this.selectedPreset && this.selectedPreset.id === id) {
+                this.selectedPreset = null;
+              }
+              this.showNotification('Deleted custom preset.');
+            } catch (e) {
+              console.error('Error deleting custom preset:', e);
+            }
+          }
         },
 
         applyConfigToBuild(cfg) {
@@ -5500,7 +5576,8 @@ Now generate for: </textarea>
             pdb: this.buildConfig.pdb || 'tarot_tl2996_pdb',
             pump: this.buildConfig.pump,
             tank: this.buildConfig.tank || 'eft_10l_tank',
-            tankCapacity_L: this.lastCalcResult.tankCapacity_L || 10
+            tankCapacity_L: this.lastCalcResult.tankCapacity_L || 10,
+            rc_rx: this.buildConfig.rc_rx || 'frsky_rxsr'
           };
 
           this.savedConfigs.push({
@@ -5674,6 +5751,7 @@ Now generate for: </textarea>
             batteryCount: this.buildConfig.batteryCount,
             fc: this.buildConfig.fc,
             gps: this.buildConfig.gps,
+            rc_rx: this.buildConfig.rc_rx,
             pump: this.buildConfig.pump,
             tank: this.buildConfig.tank,
             tankCapacity_L: this.buildConfig.tankCapacity_L,
